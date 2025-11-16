@@ -3,6 +3,7 @@
 #include <iomanip>
 
 #include <random>
+#include <shared_mutex>
 #include <string>
 
 #include <iostream>
@@ -87,7 +88,10 @@ public:
   }
 
   void GetScore(
-      // This will take the game object and return its respective score
+      // this method will change the scrren whne an event happen
+      //
+      //
+      //// This will take the game object and return its respective score
 
   ) {}
 
@@ -101,7 +105,38 @@ public:
   };
 };
 
-class MemoryMatch : public BaseGame {};
+class Button {
+  // this will draw different buttons on the screen.
+  // i might add methods for button pressed and actions etc
+  // there might be child instances of this class like puase button menu button
+  // etc
+};
+
+class MemoryMatch : public BaseGame {
+
+private:
+  std::string Sequence[100];
+  std::string PlayerInput[100];
+  GameStateManger GameState;
+  Button GameButton;
+
+public:
+  MemoryMatch(std::string Sequence, std : PlayerInput,
+              GameStateManger GameState, Button GameButton)
+      : BaseGame(), Sequence(Sequence), PlayerInput(PlayerInput),
+        GameStateManger(GameState), GameButton(Button) {};
+  {};
+
+  void GetCurrentSequenc() {
+
+  };
+
+  void ShowSequence() {}
+
+  std::string ReadUserInput() {
+    // this function will take an array input
+  }
+};
 
 class MathSpeedGame : public BaseGame {};
 
@@ -115,13 +150,6 @@ class StroopTestGame : public BaseGame {
 
 //-----------------------------Small Helper
 // Classes-----------------------------///
-
-class Button {
-  // this will draw different buttons on the screen.
-  // i might add methods for button pressed and actions etc
-  // there might be child instances of this class like puase button menu button
-  // etc
-};
 
 class StatisticsManger {};
 
