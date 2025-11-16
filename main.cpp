@@ -1,119 +1,109 @@
 #include <_timeval.h>
+#include <ctime>
 #include <exception>
 #include <iomanip>
-
+#include <iostream>
 #include <random>
 #include <shared_mutex>
 #include <string>
 
-#include <iostream>
-
 class GameStateManger {
-
-  // 1. this will hold the reference to the current screen which is shown.
-  // 2.will mange the swticing between differetn screents.
-  // 3. will handle the multiple states of the screens like pause /play etc.
-  //
+  // 1. This will hold the reference to the current screen which is shown.
+  // 2. Will manage the switching between different screens.
+  // 3. Will handle the multiple states of the screens like pause/play etc.
 };
 
 class BaseScreen {
-
-  // oky so this is a like default template or base constrocutr type shit
-  // for child classes it doens't do anything on its own but rather define
-  // oothers.
+  // This is a like default template or base constructor type
+  // for child classes. It doesn't do anything on its own but rather defines
+  // others.
 };
 
-//--------------------------------------Screens inherent From
-// BaseScreen--------------------------//
+//-------------------------------------- Screens Inherent From BaseScreen
+//--------------------------//
 
 class MainMenu : public BaseScreen {
-  // this class will inherent from the above base screen
-  // because the upper basescreen class will have multiple defined constructros.
+  // This class will inherit from the above base screen
+  // because the upper BaseScreen class will have multiple defined constructors.
 };
 
 class GameSelect : public BaseScreen {
-
-  // same shit here will come back here to put the attribures and properties
+  // Same here, will come back here to put the attributes and properties
 };
 
 class SetDiffScreen : public BaseScreen {
-  // This class will help us to seet the difficulty from.
+  // This class will help us to set the difficulty from.
 };
 
 class AnalyticsScreen : public BaseScreen {};
 
 class GameAnalyticsScreen : public BaseScreen {
-  // This will show indiviudal game staes not the general overall states.
+  // This will show individual game states not the general overall states.
 };
 
 class PauseScreen : public BaseScreen {};
 
 class ResultScreen : public BaseScreen {};
 
-//---------------------Main Game Logic Nut
-// Bolts--------------------------------///
+//--------------------- Main Game Logic Nut Bolts
+//--------------------------------//
+
+class StatisticsManager {};
 
 class BaseGame {
-
 private:
-  int CurrentScore;
-  double Timmer;
+  int currentScore;
 
-  std::string difficulty;
+  double GameTimer;
+  double TimeLimit;
 
+  double ScoreMultiplier;
   bool IsPaused;
-
-  void UpdateScore(int playerCurrentScore) {
-
-    // some logic to upadte the current score
-
-  };
+  bool IsGameOver;
+  bool TimerActive;
+  std::string difficultyLevel;
 
 public:
-  // Default Constroctr
+  StatisticsManager *InternalGameStatistics;
+
   BaseGame()
-      : CurrentScore(0), Timmer(0.0), difficulty("None"), IsPaused("False") {};
+      : currentScore(0), GameTimer(0.0), TimeLimit(0.0), ScoreMultiplier(1.0),
+        IsPaused(false), IsGameOver(false), TimerActive(false),
+        InternalGameStatistics(nullptr) {}
 
-  // Base Construcotr
-  BaseGame(int CurrentScore, double Timmer, std::string difficulty)
-      : CurrentScore(CurrentScore), Timmer(Timmer), difficulty(difficulty),
-        IsPaused("False") {};
+  BaseGame(int currentScore, double GameTimer, double TimeLimit,
+           double ScoreMultiplier, bool IsPaused, bool IsGameOver,
+           bool TimerActive, StatisticsManager *statsManager)
+      : currentScore(currentScore), GameTimer(GameTimer), TimeLimit(TimeLimit),
+        ScoreMultiplier(ScoreMultiplier), IsPaused(IsPaused),
+        IsGameOver(IsGameOver), TimerActive(TimerActive),
+        InternalGameStatistics(statsManager) {}
 
-  // methods
-
-  void PauseGame() { std::cout << "Game is Paused Right Now" << std::endl; }
-  void SetDifficulty(std::string difficulty) {
-
-    // some logic to change the difficulty
+  BaseGame(std::string difficulty, double TimeLimit,
+           StatisticsManager *statsManager)
+      : currentScore(0), GameTimer(0.0), TimeLimit(TimeLimit), IsPaused(false),
+        IsGameOver(false), TimerActive(false),
+        InternalGameStatistics(statsManager) {
+    if (difficulty == "Easy") {
+      ScoreMultiplier = 1.0;
+    } else if (difficulty == "Medium") {
+      ScoreMultiplier = 1.5;
+    } else if (difficulty == "Hard") {
+      ScoreMultiplier = 2.0;
+    } else {
+      ScoreMultiplier = 1.0;
+    }
   }
-
-  void GetScore(
-      // this method will change the scrren whne an event happen
-      //
-      //
-      //// This will take the game object and return its respective score
-
-  ) {}
-
-  void Change_State() {
-
-    // this method will change the scrren whne an event happen
-    //
-    //
-    //
-
-  };
 };
 
 class Button {
-  // this will draw different buttons on the screen.
-  // i might add methods for button pressed and actions etc
-  // there might be child instances of this class like puase button menu button
+  // This will draw different buttons on the screen.
+  // I might add methods for button pressed and actions etc
+  // There might be child instances of this class like pause button, menu button
   // etc
 };
 
 class MemoryMatch : public BaseGame {
-
 private:
   std::string Sequence[100];
   std::string PlayerInput[100];
@@ -121,20 +111,21 @@ private:
   Button GameButton;
 
 public:
-  MemoryMatch(std::string Sequence, std : PlayerInput,
+  MemoryMatch(std::string Sequence, std::string PlayerInput,
               GameStateManger GameState, Button GameButton)
       : BaseGame(), Sequence(Sequence), PlayerInput(PlayerInput),
-        GameStateManger(GameState), GameButton(Button) {};
-  {};
+        GameState(GameState), GameButton(GameButton) {}
 
-  void GetCurrentSequenc() {
+  void GetCurrentSequence() {
+    // Implementation
+  }
 
-  };
-
-  void ShowSequence() {}
+  void ShowSequence() {
+    // Implementation
+  }
 
   std::string ReadUserInput() {
-    // this function will take an array input
+    // This function will take an array input
   }
 };
 
@@ -145,28 +136,24 @@ class ReactionTime : public BaseGame {};
 class CardMatchingGame : public BaseGame {};
 
 class StroopTestGame : public BaseGame {
-  // might remove this later
+  // Might remove this later
 };
 
-//-----------------------------Small Helper
-// Classes-----------------------------///
+//----------------------------- Small Helper Classes
+//-----------------------------//
 
 class StatisticsManger {};
 
 class AssestManger {
-
-  // this class is for grabing graphics,fonts and orther mateiral for disply.
+  // This class is for grabbing graphics, fonts and other material for display.
 };
 
 class Engine {
-
-  // this class will hanlde all the operations.
-  // 1.like creating game screeens
-  // 2.manges main sfml windows when we immplement the ui.
-  // 3.Will direclty communicate with the screen manger class.
-  // 4.Will manage global events like click and updates.
+  // This class will handle all the operations.
+  // 1. Like creating game screens
+  // 2. Manages main SFML windows when we implement the UI.
+  // 3. Will directly communicate with the screen manager class.
+  // 4. Will manage global events like click and updates.
   // When this class will be triggered it will only hold a single instance of
-  // screen/staticts.
-  //
-  //
+  // screen/statistics.
 };
