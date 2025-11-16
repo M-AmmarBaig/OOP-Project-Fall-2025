@@ -1,7 +1,6 @@
 #include <_timeval.h>
 #include <ctime>
 #include <exception>
-#include <iomanip>
 #include <iostream>
 #include <random>
 #include <shared_mutex>
@@ -47,17 +46,14 @@ class PauseScreen : public BaseScreen {};
 class ResultScreen : public BaseScreen {};
 
 //--------------------- Main Game Logic Nut Bolts
-//--------------------------------//
 
 class StatisticsManager {};
 
 class BaseGame {
 private:
   int currentScore;
-
   double GameTimer;
   double TimeLimit;
-
   double ScoreMultiplier;
   bool IsPaused;
   bool IsGameOver;
@@ -70,7 +66,7 @@ public:
   BaseGame()
       : currentScore(0), GameTimer(0.0), TimeLimit(0.0), ScoreMultiplier(1.0),
         IsPaused(false), IsGameOver(false), TimerActive(false),
-        InternalGameStatistics(nullptr) {}
+        difficultyLevel("Easy"), InternalGameStatistics(nullptr) {}
 
   BaseGame(int currentScore, double GameTimer, double TimeLimit,
            double ScoreMultiplier, bool IsPaused, bool IsGameOver,
@@ -78,12 +74,12 @@ public:
       : currentScore(currentScore), GameTimer(GameTimer), TimeLimit(TimeLimit),
         ScoreMultiplier(ScoreMultiplier), IsPaused(IsPaused),
         IsGameOver(IsGameOver), TimerActive(TimerActive),
-        InternalGameStatistics(statsManager) {}
+        difficultyLevel("Easy"), InternalGameStatistics(statsManager) {}
 
   BaseGame(std::string difficulty, double TimeLimit,
            StatisticsManager *statsManager)
       : currentScore(0), GameTimer(0.0), TimeLimit(TimeLimit), IsPaused(false),
-        IsGameOver(false), TimerActive(false),
+        IsGameOver(false), TimerActive(false), difficultyLevel(difficulty),
         InternalGameStatistics(statsManager) {
     if (difficulty == "Easy") {
       ScoreMultiplier = 1.0;
@@ -98,110 +94,134 @@ public:
 
   void AddScore(int Points) { currentScore += Points; }
 
-  void AddScore(int Points, double ScoreMultiplier) {
-
-    currentScore = Points * ScoreMultiplier;
+  void AddScore(int Points, double CustomMultiplier) {
+    currentScore += (Points * CustomMultiplier);
   }
 
   void SubtractPoint(int Points) {
-    currentScore = currentScore - Points;
-
-    if (currentScore < 0) {
-
-      std::cout << "The Score is already Zero" << std::endl;
+    if (currentScore - Points < 0) {
+      currentScore = 0;
+      std::cout << "Score cannot go below zero. Setting score to 0."
+                << std::endl;
+    } else {
+      currentScore -= Points;
     }
   }
 
   int GetCurrentScore() { return currentScore; }
 
-  void ResestScore() { currentScore = 0; }
+  void ResetScore() { currentScore = 0; }
 
-  void StartTimer() { TimerActive = true; }
+  void StartTimer() {
+    GameTimer = 0.0;
+    TimerActive = true;
+  }
 
-  void UpdateTimer(double ChangeInTime) {}
+  void UpdateTimer(double ChangeInTime) {
+    if (TimerActive && !IsPaused) {
+      GameTimer += ChangeInTime;
+
+      if (IsTimeUp()) {
+        EndGame();
+      }
+    }
+  }
 
   void PauseTimer() { TimerActive = false; }
 
   void ResumeTimer() { TimerActive = true; }
 
-  double GetElapsedTimer() { return GameTimer; }
+  double GetElapsedTime() { return GameTimer; }
 
-  double GetRemainingTime() { return TimeLimit - GameTimer; }
+  double GetRemainingTime() {
+    double remaining = TimeLimit - GameTimer;
+    return (remaining > 0.0) ? remaining : 0.0;
+  }
 
-  bool isTimeUp() {}
-  void PauseGame() { IsPaused = true; }
+  bool IsTimeUp() {
+    if (TimeLimit <= 0.0) {
+      return false;
+    }
+    return GameTimer >= TimeLimit;
+  }
+
+  void SetTimeLimit(double newLimit) { TimeLimit = newLimit; }
+
+  void PauseGame() {
+    IsPaused = true;
+    PauseTimer();
+    std::cout << "Game Paused" << std::endl;
+  }
+
   void ResumeGame() {
-
     IsPaused = false;
-
-    BaseGame::ResumeGame();
-
-    std::cout << "Game Reusmed" << std::endl;
+    ResumeTimer();
+    std::cout << "Game Resumed" << std::endl;
   }
 
   void TogglePause() {
-
-    if (IsPaused == true) {
-      BaseGame::ResumeGame();
-
-    }
-
-    else {
-
-      BaseGame::PauseGame();
+    if (IsPaused == false) {
+      ResumeGame();
+    } else {
+      PauseGame();
     }
   }
 
-  void SetDifficulty(std::string GivenDiffculty) {
-    difficultyLevel = GivenDiffculty;
-    if (GivenDiffculty == "Easy") {
+  bool CheckIfPaused() { return IsPaused; }
 
+  void SetDifficulty(std::string GivenDifficulty) {
+    difficultyLevel = GivenDifficulty;
+
+    if (GivenDifficulty == "Easy") {
       ScoreMultiplier = 1.0;
-
-    } else if (GivenDiffculty == "Medium") {
-
+    } else if (GivenDifficulty == "Medium") {
       ScoreMultiplier = 1.5;
-
-    }
-
-    else if (GivenDiffculty == "Hard") {
-
+    } else if (GivenDifficulty == "Hard") {
       ScoreMultiplier = 2.0;
+    } else {
+      ScoreMultiplier = 1.0;
+      difficultyLevel = "Easy";
     }
   }
 
   std::string GetDifficulty() { return difficultyLevel; }
 
-  double GetScoreMultipler() { return ScoreMultiplier; }
+  double GetScoreMultiplier() { return ScoreMultiplier; }
 
   void EndGame() {
-
-    IsGameOver = IsGameOver = true;
-
+    IsGameOver = true;
     TimerActive = false;
-    // will save score once i created the state manager
-    // will go back to reuslts scree.
+
+    std::cout << "Game Over! Final Score: " << currentScore << std::endl;
+
+    if (InternalGameStatistics != nullptr) {
+      // InternalGameStatistics->SaveScore(gameName, currentScore);
+    }
+
+    // TODO: Switch to ResultsScreen via ScreenManager
   }
 
   void RestartGame() {
+    ResetScore();
+    GameTimer = 0.0;
+    IsPaused = false;
+    IsGameOver = false;
+    StartTimer();
 
-    BaseGame::ResestScore();
-    BaseGame::ResumeTimer();
-    BaseGame::IsPaused = false;
-    BaseGame::IsGameOver = false;
+    std::cout << "Game Restarted" << std::endl;
   }
 
-  virtual void HanldeInput(std::string Event_Name) {
-    // this will be an sfml object inthe input
-  }
+  bool CheckIfGameOver() { return IsGameOver; }
 
-  virtual void Update(double TimeChange) {}
+  bool IsGameActive() { return !IsPaused && !IsGameOver; }
 
-  virtual void displayOutput() {
+  virtual void HandleInput(std::string Event_Name) = 0;
 
-    // this will become an render function
-    // when we use sfml
-  }
+  virtual void Update(double TimeChange) { UpdateTimer(TimeChange); }
+
+  virtual void DisplayOutput() = 0;
+
+  virtual ~BaseGame() {}
 };
 
 class Button {
