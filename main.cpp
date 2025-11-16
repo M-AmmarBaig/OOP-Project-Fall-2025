@@ -5,6 +5,7 @@
 #include <iostream>
 #include <random>
 #include <shared_mutex>
+#include <stdexcept>
 #include <string>
 
 class GameStateManger {
@@ -93,6 +94,113 @@ public:
     } else {
       ScoreMultiplier = 1.0;
     }
+  }
+
+  void AddScore(int Points) { currentScore += Points; }
+
+  void AddScore(int Points, double ScoreMultiplier) {
+
+    currentScore = Points * ScoreMultiplier;
+  }
+
+  void SubtractPoint(int Points) {
+    currentScore = currentScore - Points;
+
+    if (currentScore < 0) {
+
+      std::cout << "The Score is already Zero" << std::endl;
+    }
+  }
+
+  int GetCurrentScore() { return currentScore; }
+
+  void ResestScore() { currentScore = 0; }
+
+  void StartTimer() { TimerActive = true; }
+
+  void UpdateTimer(double ChangeInTime) {}
+
+  void PauseTimer() { TimerActive = false; }
+
+  void ResumeTimer() { TimerActive = true; }
+
+  double GetElapsedTimer() { return GameTimer; }
+
+  double GetRemainingTime() { return TimeLimit - GameTimer; }
+
+  bool isTimeUp() {}
+  void PauseGame() { IsPaused = true; }
+  void ResumeGame() {
+
+    IsPaused = false;
+
+    BaseGame::ResumeGame();
+
+    std::cout << "Game Reusmed" << std::endl;
+  }
+
+  void TogglePause() {
+
+    if (IsPaused == true) {
+      BaseGame::ResumeGame();
+
+    }
+
+    else {
+
+      BaseGame::PauseGame();
+    }
+  }
+
+  void SetDifficulty(std::string GivenDiffculty) {
+    difficultyLevel = GivenDiffculty;
+    if (GivenDiffculty == "Easy") {
+
+      ScoreMultiplier = 1.0;
+
+    } else if (GivenDiffculty == "Medium") {
+
+      ScoreMultiplier = 1.5;
+
+    }
+
+    else if (GivenDiffculty == "Hard") {
+
+      ScoreMultiplier = 2.0;
+    }
+  }
+
+  std::string GetDifficulty() { return difficultyLevel; }
+
+  double GetScoreMultipler() { return ScoreMultiplier; }
+
+  void EndGame() {
+
+    IsGameOver = IsGameOver = true;
+
+    TimerActive = false;
+    // will save score once i created the state manager
+    // will go back to reuslts scree.
+  }
+
+  void RestartGame() {
+
+    BaseGame::ResestScore();
+    BaseGame::ResumeTimer();
+    BaseGame::IsPaused = false;
+    BaseGame::IsGameOver = false;
+  }
+
+  virtual void HanldeInput(std::string Event_Name) {
+    // this will be an sfml object inthe input
+  }
+
+  virtual void Update(double TimeChange) {}
+
+  virtual void displayOutput() {
+
+    // this will become an render function
+    // when we use sfml
   }
 };
 
