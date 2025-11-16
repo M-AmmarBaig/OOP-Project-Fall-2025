@@ -1,3 +1,5 @@
+#include <_timeval.h>
+#include <exception>
 #include <iomanip>
 
 #include <random>
@@ -51,8 +53,52 @@ class ResultScreen : public BaseScreen {};
 // Bolts--------------------------------///
 
 class BaseGame {
-  // Main game classs
-  // every sub game will inheirnt from this class from on.
+
+private:
+  int CurrentScore;
+  double Timmer;
+
+  std::string difficulty;
+
+  bool IsPaused;
+
+  void UpdateScore(int playerCurrentScore) {
+
+    // some logic to upadte the current score
+
+  };
+
+public:
+  // Default Constroctr
+  BaseGame()
+      : CurrentScore(0), Timmer(0.0), difficulty("None"), IsPaused("False") {};
+
+  // Base Construcotr
+  BaseGame(int CurrentScore, double Timmer, std::string difficulty)
+      : CurrentScore(CurrentScore), Timmer(Timmer), difficulty(difficulty),
+        IsPaused("False") {};
+
+  // methods
+
+  void PauseGame() { std::cout << "Game is Paused Right Now" << std::endl; }
+  void SetDifficulty(std::string difficulty) {
+
+    // some logic to change the difficulty
+  }
+
+  void GetScore(
+      // This will take the game object and return its respective score
+
+  ) {}
+
+  void Change_State() {
+
+    // this method will change the scrren whne an event happen
+    //
+    //
+    //
+
+  };
 };
 
 class MemoryMatch : public BaseGame {};
