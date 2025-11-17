@@ -1,16 +1,20 @@
 #include <_timeval.h>
-#include <ctime>
-#include <exception>
+#include <cstdint>
+#include <cstdio>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
-#include <random>
-#include <shared_mutex>
-#include <stdexcept>
+#include <iterator>
 #include <string>
 
-class GameStateManger {
-  // 1. This will hold the reference to the current screen which is shown.
-  // 2. Will manage the switching between different screens.
-  // 3. Will handle the multiple states of the screens like pause/play etc.
+class GameStat {
+
+public:
+  std::string gameName;
+  int scores[100];
+  int highScore;
+  int playCount;
+  int scoreCount;
 };
 
 class BaseScreen {
@@ -47,7 +51,152 @@ class ResultScreen : public BaseScreen {};
 
 //--------------------- Main Game Logic Nut Bolts
 
-class StatisticsManager {};
+class StatisticsManager {
+
+private:
+  GameStat allGames[5];
+
+  std::string SaveFileName;
+  int totalGamesPlayed;
+
+public:
+  StatisticsManager(std::string saveFileName = "game_stats.txt")
+      : SaveFileName(saveFileName), totalGamesPlayed(0) {
+
+    allGames[0].gameName = "MemoryMatch";
+    allGames[0].scoreCount = 0;
+    allGames[0].highScore = 0;
+    allGames[0].playCount = 0;
+
+    allGames[1].gameName = "MathSpeed";
+    allGames[1].scoreCount = 0;
+    allGames[1].highScore = 0;
+    allGames[1].playCount = 0;
+
+    allGames[2].gameName = "ReactionTime";
+    allGames[2].scoreCount = 0;
+    allGames[2].highScore = 0;
+    allGames[2].playCount = 0;
+
+    allGames[3].gameName = "CardsMatching";
+    allGames[3].scoreCount = 0;
+    allGames[3].highScore = 0;
+    allGames[3].playCount = 0;
+
+    allGames[4].gameName = "StroopTest";
+    allGames[4].scoreCount = 0;
+    allGames[4].highScore = 0;
+    allGames[4].playCount = 0;
+  }
+
+  bool ReadFromFile() {
+
+    std::fstream Input(SaveFileName);
+
+    if (!Input.is_open()) {
+
+      std::cout << "The file is not opened properly" << std::endl;
+
+      return false;
+    } else {
+
+      for (int i = 0; i < 5; i++) {
+
+        std::getline(Input, allGames[i].gameName);
+
+        Input >> allGames[i].scoreCount;
+
+        Input >> allGames[i].highScore;
+
+        Input >> allGames[i].playCount;
+
+        for (int j = 0; j < allGames[i].scoreCount; j++) {
+
+          Input >> allGames[i].scores[j];
+        }
+
+        Input.ignore();
+      }
+    }
+    Input.close();
+
+    return true;
+  }
+
+  bool SaveToFile() {
+
+    std::ofstream outputFile(SaveFileName);
+
+    std::fstream Input(SaveFileName);
+
+    if (!outputFile.is_open()) {
+      std::cout << "Error: Could not open file for writing." << std::endl;
+      return false;
+    } else {
+
+      for (int i = 0; i < 5; i++) {
+
+        std::string GameName = allGames[i].gameName;
+        int scoreCount = allGames[i].scoreCount;
+        int highScore = allGames[i].highScore;
+        int playCount = allGames[i].playCount;
+
+        outputFile << GameName << "\n";
+        outputFile << scoreCount << "\n";
+        outputFile << highScore << "\n";
+        outputFile << playCount << "\n";
+
+        for (int j = 0; j < scoreCount; j++) {
+          outputFile << allGames[i].scores[j] << " ";
+        }
+
+        outputFile << "\n";
+      }
+    }
+  }
+
+  void SetScore(int GameIndex, int Score) {
+
+  };
+
+  void SaveScore() {
+
+    // pass the game object here and then the score paramter
+  }
+
+  double GetBestScore() {
+
+    // will ge the best score from each array
+    // class of the game
+  }
+
+  double GetScoreHistory() {
+
+    // will pass the game object into this and then
+    //
+    // we will get the score histry for that game
+  }
+  int GetGamesPlayedCount() {}
+
+  double GetAverageScore() {
+    // will pass the game object here
+  }
+  void ResestStats() {
+
+    // this will take the game index or object
+    //
+    // and will set the statss to zero;
+    //
+  }
+
+  double GetLastBestScore() {
+
+    // will take the game index or object
+    //
+    // and will return the best last score of the
+    // paseed gmael;
+  }
+};
 
 class BaseGame {
 private:
@@ -227,8 +376,8 @@ public:
 class Button {
   // This will draw different buttons on the screen.
   // I might add methods for button pressed and actions etc
-  // There might be child instances of this class like pause button, menu button
-  // etc
+  // There might be child instances of this class like pause button, menu
+  // button etc
 };
 
 class MemoryMatch : public BaseGame {
@@ -273,7 +422,8 @@ class StroopTestGame : public BaseGame {
 class StatisticsManger {};
 
 class AssestManger {
-  // This class is for grabbing graphics, fonts and other material for display.
+  // This class is for grabbing graphics, fonts and other material for
+  // display.
 };
 
 class Engine {
