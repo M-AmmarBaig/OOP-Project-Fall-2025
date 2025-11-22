@@ -4,6 +4,10 @@
 #include <ostream>
 #include <string>
 
+#include <chrono>
+#include <cstdlib>
+#include <thread>
+
 #include <vector>
 
 class GameStat {
@@ -487,12 +491,25 @@ public:
       isShowingPattern = true;
     }
   };
+
   void Render() {
     if (isShowingPattern == true) {
-      std::cout << "Memorize This Sequence " << std::endl;
+      system("cls");
+
+      std::cout << "Memorize This Sequence..." << std::endl;
+
+      std::this_thread::sleep_for(std::chrono::seconds(1));
 
       for (int i = 0; i < sequence.size(); i++) {
-        std::cout << "Number: " << sequence[i] << std::endl;
+        system("cls");
+
+        std::cout << "\n\n   " << sequence[i] << "   \n\n";
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        system("cls");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
 
       isShowingPattern = false;
@@ -503,32 +520,31 @@ public:
       std::cout << "YOUR TURN! Type the numbers..." << std::endl;
     }
   }
-};
 
-class MathSpeedGame : public BaseGame {};
+  class MathSpeedGame : public BaseGame {};
 
-class ReactionTime : public BaseGame {};
+  class ReactionTime : public BaseGame {};
 
-class CardMatchingGame : public BaseGame {};
+  class CardMatchingGame : public BaseGame {};
 
-class StroopTestGame : public BaseGame {
-  // Might remove this later
-};
+  class StroopTestGame : public BaseGame {
+    // Might remove this later
+  };
 
-//----------------------------- Small Helper Classes
-//-----------------------------//
+  //----------------------------- Small Helper Classes
+  //-----------------------------//
 
-class AssestManger {
-  // This class is for grabbing graphics, fonts and other material for
-  // display.
-};
+  class AssestManger {
+    // This class is for grabbing graphics, fonts and other material for
+    // display.
+  };
 
-class Engine {
-  // This class will handle all the operations.
-  // 1. Like creating game screens
-  // 2. Manages main SFML windows when we implement the UI.
-  // 3. Will directly communicate with the screen manager class.
-  // 4. Will manage global events like click and updates.
-  // When this class will be triggered it will only hold a single instance of
-  // screen/statistics.
-};
+  class Engine {
+    // This class will handle all the operations.
+    // 1. Like creating game screens
+    // 2. Manages main SFML windows when we implement the UI.
+    // 3. Will directly communicate with the screen manager class.
+    // 4. Will manage global events like click and updates.
+    // When this class will be triggered it will only hold a single instance of
+    // screen/statistics.
+  };
