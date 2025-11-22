@@ -8,6 +8,7 @@
 #include <thread>
 #include <vector>
 
+// Data structure to hold stats for a single game
 class GameStat {
 public:
   std::string gameName;
@@ -17,22 +18,17 @@ public:
   int scoreCount;
 };
 
+// --- Screen Placeholders (Future GUI use) ---
 class BaseScreen {};
-
 class MainMenu : public BaseScreen {};
-
 class GameSelect : public BaseScreen {};
-
 class SetDiffScreen : public BaseScreen {};
-
 class AnalyticsScreen : public BaseScreen {};
-
 class GameAnalyticsScreen : public BaseScreen {};
-
 class PauseScreen : public BaseScreen {};
-
 class ResultScreen : public BaseScreen {};
 
+// --- Statistics Manager ---
 class StatisticsManager {
 private:
   GameStat allGames[5];
@@ -43,6 +39,7 @@ public:
   StatisticsManager(std::string saveFileName = "game_stats.txt")
       : SaveFileName(saveFileName), totalGamesPlayed(0) {
 
+    // Initialize all 5 games
     allGames[0].gameName = "MemoryMatch";
     allGames[0].scoreCount = 0;
     allGames[0].highScore = 0;
@@ -72,7 +69,7 @@ public:
   bool ReadFromFile() {
     std::fstream Input(SaveFileName);
     if (!Input.is_open()) {
-      std::cout << "The file is not opened properly" << std::endl;
+      std::cout << "The file is not opened properly (First run?)" << std::endl;
       return false;
     } else {
       for (int i = 0; i < 5; i++) {
@@ -83,7 +80,7 @@ public:
         for (int j = 0; j < allGames[i].scoreCount; j++) {
           Input >> allGames[i].scores[j];
         }
-        Input.ignore();
+        Input.ignore(); // Consume the newline after reading scores
       }
     }
     Input.close();
@@ -97,17 +94,12 @@ public:
       return false;
     } else {
       for (int i = 0; i < 5; i++) {
-        std::string GameName = allGames[i].gameName;
-        int scoreCount = allGames[i].scoreCount;
-        int highScore = allGames[i].highScore;
-        int playCount = allGames[i].playCount;
+        outputFile << allGames[i].gameName << "\n";
+        outputFile << allGames[i].scoreCount << "\n";
+        outputFile << allGames[i].highScore << "\n";
+        outputFile << allGames[i].playCount << "\n";
 
-        outputFile << GameName << "\n";
-        outputFile << scoreCount << "\n";
-        outputFile << highScore << "\n";
-        outputFile << playCount << "\n";
-
-        for (int j = 0; j < scoreCount; j++) {
+        for (int j = 0; j < allGames[i].scoreCount; j++) {
           outputFile << allGames[i].scores[j] << " ";
         }
         outputFile << "\n";
@@ -121,12 +113,10 @@ public:
 
   void SaveScore(int gameindex, int score) {
     if (gameindex > 4 || gameindex < 0) {
-      std::cout << "the game index is invalid please enter teh right index"
-                << std::endl;
+      std::cout << "The game index is invalid." << std::endl;
       return;
     } else if (allGames[gameindex].scoreCount >= 100) {
-      std::cout << "the score count is full cannot add more scores"
-                << std::endl;
+      std::cout << "Score history is full." << std::endl;
     } else {
       int temp_score_count = allGames[gameindex].scoreCount;
       allGames[gameindex].scores[temp_score_count] = score;
@@ -140,9 +130,15 @@ public:
     SaveToFile();
   }
 
-  double GetBestScore(int GameIndex) { return allGames[GameIndex].highScore; }
+  double GetBestScore(int GameIndex) {
+    if (GameIndex < 0 || GameIndex > 4)
+      return 0;
+    return allGames[GameIndex].highScore;
+  }
 
   int GetScoreHistory(int GameIndex, int outputArray[]) {
+    if (GameIndex < 0 || GameIndex > 4)
+      return 0;
     int count = allGames[GameIndex].scoreCount;
     for (int i = 0; i < count; i++) {
       outputArray[i] = allGames[GameIndex].scores[i];
@@ -158,18 +154,29 @@ public:
     return total;
   }
 
+  // New Helper: Get play count for a specific game
+  int GetGameSpecificPlayCount(int GameIndex) {
+
+    return allGames[GameIndex].playCount;
+  }
+
+  std::string GetGameName(int GameIndex) {
+    return allGames[GameIndex].gameName;
+  }
+
   double GetAverageScore(int GameIndex) {
     if (allGames[GameIndex].scoreCount == 0)
       return 0.0;
+
     double scoresum = 0;
     for (int i = 0; i < allGames[GameIndex].scoreCount; i++) {
       scoresum += allGames[GameIndex].scores[i];
     }
-    double average = scoresum / allGames[GameIndex].scoreCount;
-    return average;
+    return scoresum / allGames[GameIndex].scoreCount;
   }
 
   void ResetStats(int GameIndex) {
+
     allGames[GameIndex].scoreCount = 0;
     allGames[GameIndex].highScore = 0;
     allGames[GameIndex].playCount = 0;
@@ -177,6 +184,7 @@ public:
   }
 
   double GetLastBestScore(int GameIndex) {
+
     if (allGames[GameIndex].scoreCount == 0)
       return 0;
     int lastIndex = allGames[GameIndex].scoreCount - 1;
@@ -184,6 +192,7 @@ public:
   }
 };
 
+// --- Base Game Class ---
 class BaseGame {
 private:
   int currentScore;
@@ -203,47 +212,16 @@ public:
         IsPaused(false), IsGameOver(false), TimerActive(false),
         difficultyLevel("Easy"), InternalGameStatistics(nullptr) {}
 
-  BaseGame(int currentScore, double GameTimer, double TimeLimit,
-           double ScoreMultiplier, bool IsPaused, bool IsGameOver,
-           bool TimerActive, StatisticsManager *statsManager)
-      : currentScore(currentScore), GameTimer(GameTimer), TimeLimit(TimeLimit),
-        ScoreMultiplier(ScoreMultiplier), IsPaused(IsPaused),
-        IsGameOver(IsGameOver), TimerActive(TimerActive),
-        difficultyLevel("Easy"), InternalGameStatistics(statsManager) {}
-
   BaseGame(std::string difficulty, double TimeLimit,
            StatisticsManager *statsManager)
       : currentScore(0), GameTimer(0.0), TimeLimit(TimeLimit), IsPaused(false),
         IsGameOver(false), TimerActive(false), difficultyLevel(difficulty),
         InternalGameStatistics(statsManager) {
-    if (difficulty == "Easy") {
-      ScoreMultiplier = 1.0;
-    } else if (difficulty == "Medium") {
-      ScoreMultiplier = 1.5;
-    } else if (difficulty == "Hard") {
-      ScoreMultiplier = 2.0;
-    } else {
-      ScoreMultiplier = 1.0;
-    }
+
+    SetDifficulty(difficulty);
   }
 
   void AddScore(int Points) { currentScore += Points; }
-
-  void AddScore(int Points, double CustomMultiplier) {
-    currentScore += (Points * CustomMultiplier);
-  }
-
-  void SubtractPoint(int Points) {
-    if (currentScore - Points < 0) {
-      currentScore = 0;
-      std::cout << "Score cannot go below zero. Setting score to 0."
-                << std::endl;
-    } else {
-      currentScore -= Points;
-    }
-  }
-
-  int GetCurrentScore() { return currentScore; }
 
   void ResetScore() { currentScore = 0; }
 
@@ -261,45 +239,11 @@ public:
     }
   }
 
-  void PauseTimer() { TimerActive = false; }
-  void ResumeTimer() { TimerActive = true; }
-  double GetElapsedTime() { return GameTimer; }
-
-  double GetRemainingTime() {
-    double remaining = TimeLimit - GameTimer;
-    return (remaining > 0.0) ? remaining : 0.0;
-  }
-
   bool IsTimeUp() {
-    if (TimeLimit <= 0.0) {
+    if (TimeLimit <= 0.0)
       return false;
-    }
     return GameTimer >= TimeLimit;
   }
-
-  void SetTimeLimit(double newLimit) { TimeLimit = newLimit; }
-
-  void PauseGame() {
-    IsPaused = true;
-    PauseTimer();
-    std::cout << "Game Paused" << std::endl;
-  }
-
-  void ResumeGame() {
-    IsPaused = false;
-    ResumeTimer();
-    std::cout << "Game Resumed" << std::endl;
-  }
-
-  void TogglePause() {
-    if (IsPaused == false) {
-      ResumeGame();
-    } else {
-      PauseGame();
-    }
-  }
-
-  bool CheckIfPaused() { return IsPaused; }
 
   void SetDifficulty(std::string GivenDifficulty) {
     difficultyLevel = GivenDifficulty;
@@ -316,27 +260,18 @@ public:
   }
 
   std::string GetDifficulty() { return difficultyLevel; }
-  double GetScoreMultiplier() { return ScoreMultiplier; }
 
   void EndGame() {
     IsGameOver = true;
     TimerActive = false;
     std::cout << "Game Over! Final Score: " << currentScore << std::endl;
     if (InternalGameStatistics != nullptr) {
+      // abhi memeory match me sirf score store kerha hu cuz baki ke games
+      // create  nhi kie hye hai
       InternalGameStatistics->SaveScore(0, currentScore);
     }
   }
 
-  void RestartGame() {
-    ResetScore();
-    GameTimer = 0.0;
-    IsPaused = false;
-    IsGameOver = false;
-    StartTimer();
-    std::cout << "Game Restarted" << std::endl;
-  }
-
-  bool CheckIfGameOver() { return IsGameOver; }
   bool IsGameActive() { return !IsPaused && !IsGameOver; }
 
   virtual void HandleInput() = 0;
@@ -345,12 +280,10 @@ public:
   virtual ~BaseGame() {}
 };
 
-class Button {};
-
+// --- Memory Match Game ---
 class MemoryMatch : public BaseGame {
 private:
   std::vector<int> sequence;
-  std::vector<int> playerInput;
   bool isShowingPattern;
   double messageTimer;
 
@@ -427,24 +360,20 @@ class MathSpeedGame : public BaseGame {
   void HandleInput() override {}
   void DisplayOutput() override {}
 };
-
 class ReactionTime : public BaseGame {
   void HandleInput() override {}
   void DisplayOutput() override {}
 };
-
 class CardMatchingGame : public BaseGame {
   void HandleInput() override {}
   void DisplayOutput() override {}
 };
-
 class StroopTestGame : public BaseGame {
   void HandleInput() override {}
   void DisplayOutput() override {}
 };
 
-class AssestManger {};
-
+// --- Engine ---
 class Engine {
 private:
   StatisticsManager statsManager;
@@ -454,6 +383,8 @@ private:
     std::string diff;
     std::cin >> diff;
 
+    // Abhi MemoryMatch ke lie sirf hard code kia hua hai baad me change hoga
+    // yee!
     MemoryMatch game(diff, &statsManager);
     game.StartTimer();
 
@@ -466,7 +397,20 @@ private:
   }
 
   void ShowAnalytics() {
-    std::cout << "Showing Analytics..." << std::endl;
+    system("cls");
+    std::cout << "Total Games Played (All Types): "
+              << statsManager.GetGamesPlayedCount() << std::endl;
+    std::cout << "-----------------------------" << std::endl;
+
+    for (int i = 0; i < 5; i++) {
+      std::cout << "Game: " << statsManager.GetGameName(i) << std::endl;
+      std::cout << "  High Score:    " << statsManager.GetBestScore(i)
+                << std::endl;
+      std::cout << "  Average Score: " << statsManager.GetAverageScore(i)
+                << std::endl;
+      std::cout << "  Times Played:  "
+                << statsManager.GetGameSpecificPlayCount(i) << std::endl;
+    }
     system("pause");
   }
 
@@ -477,13 +421,9 @@ public:
     bool appRunning = true;
     while (appRunning) {
       system("cls");
-      std::cout << "=============================" << std::endl;
-      std::cout << "      BRAIN GAMES ENGINE     " << std::endl;
-      std::cout << "=============================" << std::endl;
       std::cout << "1. Play Game" << std::endl;
       std::cout << "2. View Analytics" << std::endl;
       std::cout << "3. Exit" << std::endl;
-      std::cout << "=============================" << std::endl;
       std::cout << "Enter your choice: ";
 
       int choice;
