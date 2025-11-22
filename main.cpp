@@ -189,37 +189,53 @@ public:
 
     SaveToFile();
   }
-  double GetBestScore() {
+  double GetBestScore(int GameIndex) { return allGames[GameIndex].highScore; }
 
-    // will ge the best score from each array
-    // class of the game
+  int GetScoreHistory(int GameIndex, int outputArray[]) {
+
+    int count = allGames[GameIndex].scoreCount;
+
+    for (int i = 0; i < count; i++) {
+      outputArray[i] = allGames[GameIndex].scores[i];
+    }
+
+    return count;
   }
 
-  double GetScoreHistory() {
+  int GetGamesPlayedCount() {
 
-    // will pass the game object into this and then
-    //
-    // we will get the score histry for that game
-  }
-  int GetGamesPlayedCount() {}
+    int allgames = 0;
 
-  double GetAverageScore() {
-    // will pass the game object here
-  }
-  void ResestStats() {
+    for (int i = 0; i < 4; i++) {
 
-    // this will take the game index or object
-    //
-    // and will set the statss to zero;
-    //
+      allgames = +allGames[i].playCount;
+    }
+    return allgames;
   }
 
-  double GetLastBestScore() {
+  double GetAverageScore(int GameIndex) {
+    double scoresum = 0;
 
-    // will take the game index or object
-    //
-    // and will return the best last score of the
-    // paseed gmael;
+    for (int i = 0; i < allGames[GameIndex].scoreCount; i++) {
+
+      scoresum += allGames[GameIndex].scores[i];
+    }
+    double average = scoresum / allGames[GameIndex].scoreCount;
+
+    return average;
+  }
+  void ResestStats(int GameIndex) {
+
+    allGames[GameIndex].scoreCount = 0;
+    allGames[GameIndex].highScore = 0;
+    allGames[GameIndex].playCount = 0;
+    SaveToFile();
+  }
+
+  double GetLastBestScore(int GameIndex) {
+
+    int lastIndex = allGames[GameIndex].scoreCount - 1;
+    return allGames[GameIndex].scores[lastIndex];
   }
 };
 
