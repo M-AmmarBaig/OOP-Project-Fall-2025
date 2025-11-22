@@ -159,11 +159,36 @@ public:
 
   };
 
-  void SaveScore() {
+  void SaveScore(int gameindex, int score) {
 
-    // pass the game object here and then the score paramter
+    if (gameindex > 4 || gameindex < 0) {
+      std::cout << "the game index is invalid please enter teh right index"
+                << std::endl;
+      return;
+    }
+
+    else if (allGames[gameindex].scoreCount >= 100) {
+      std::cout << "the score count is full cannot add more scores"
+                << std::endl;
+    }
+
+    else {
+      int temp_score_count = allGames[gameindex].scoreCount;
+
+      allGames[gameindex].scores[temp_score_count] = score;
+
+      allGames[gameindex].scoreCount++;
+    }
+
+    if (score > allGames[gameindex].highScore) {
+
+      allGames[gameindex].highScore = score;
+    }
+
+    allGames[gameindex].playCount++;
+
+    SaveToFile();
   }
-
   double GetBestScore() {
 
     // will ge the best score from each array
