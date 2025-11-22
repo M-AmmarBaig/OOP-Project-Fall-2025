@@ -1,11 +1,10 @@
 #include <_timeval.h>
-#include <cstdint>
-#include <cstdio>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <iterator>
+#include <ostream>
 #include <string>
+
+#include <vector>
 
 class GameStat {
 
@@ -386,6 +385,8 @@ public:
 
     if (InternalGameStatistics != nullptr) {
       // InternalGameStatistics->SaveScore(gameName, currentScore);
+
+      StatisticsManager::SaveScore(currentScore);
     }
 
     // TODO: Switch to ResultsScreen via ScreenManager
@@ -423,27 +424,84 @@ class Button {
 
 class MemoryMatch : public BaseGame {
 private:
-  std::string Sequence[100];
-  std::string PlayerInput[100];
-  GameStateManger GameState;
-  Button GameButton;
+  std::vector<int> sequence;
+  std::vector<int> playerInput;
+
+  bool isShowingPattern;
+  double messageTimer; // screen)
+
+  void AddToSequence() {
+    int nextNum = (rand() % 4) + 1;
+    sequence.push_back(nextNum);
+  }
 
 public:
-  MemoryMatch(std::string Sequence, std::string PlayerInput,
-              GameStateManger GameState, Button GameButton)
-      : BaseGame(), Sequence(Sequence), PlayerInput(PlayerInput),
-        GameState(GameState), GameButton(GameButton) {}
+  MemoryMatch(std::string difficulty, StatisticsManager *stats)
+      : BaseGame(difficulty, 0.0, stats) {
 
-  void GetCurrentSequence() {
-    // Implementation
+    isShowingPattern = true;
+    messageTimer = 0.0;
+
+    AddToSequence();
+    AddToSequence();
+    AddToSequence();
   }
 
-  void ShowSequence() {
-    // Implementation
-  }
+  void Update(double deltaTime) {
 
-  std::string ReadUserInput() {
-    // This function will take an array input
+    if (is) {
+    }
+  };
+  void HandleInput() {
+
+    if (isShowingPattern == true) {
+
+      return;
+
+    }
+
+    else {
+
+      for (int i = 0; i < sequence.size(); i++) {
+
+        int user_guess = 0;
+
+        std::cin >> user_guess;
+
+        if (user_guess == sequence[i]) {
+          std::cout << "Matched" << std::endl;
+
+        } else {
+
+          std::cout << "Game Over!" << std::endl;
+
+          EndGame();
+
+          return;
+        }
+      }
+
+      AddScore(100);
+      AddToSequence();
+
+      isShowingPattern = true;
+    }
+  };
+  void Render() {
+    if (isShowingPattern == true) {
+      std::cout << "Memorize This Sequence " << std::endl;
+
+      for (int i = 0; i < sequence.size(); i++) {
+        std::cout << "Number: " << sequence[i] << std::endl;
+      }
+
+      isShowingPattern = false;
+
+    } else {
+      std::cout << "Welcome To Memory Match" << std::endl;
+      std::cout << "Current difficulty: " << GetDifficulty() << std::endl;
+      std::cout << "YOUR TURN! Type the numbers..." << std::endl;
+    }
   }
 };
 
@@ -459,8 +517,6 @@ class StroopTestGame : public BaseGame {
 
 //----------------------------- Small Helper Classes
 //-----------------------------//
-
-class StatisticsManger {};
 
 class AssestManger {
   // This class is for grabbing graphics, fonts and other material for
