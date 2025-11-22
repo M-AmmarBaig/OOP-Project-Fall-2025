@@ -1,17 +1,14 @@
-#include <_timeval.h>
+#include <chrono>
+#include <cstdlib>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <ostream>
 #include <string>
-
-#include <chrono>
-#include <cstdlib>
 #include <thread>
-
 #include <vector>
 
 class GameStat {
-
 public:
   std::string gameName;
   int scores[100];
@@ -20,45 +17,25 @@ public:
   int scoreCount;
 };
 
-class BaseScreen {
-  // This is a like default template or base constructor type
-  // for child classes. It doesn't do anything on its own but rather defines
-  // others.
-};
+class BaseScreen {};
 
-//-------------------------------------- Screens Inherent From BaseScreen
-//--------------------------//
+class MainMenu : public BaseScreen {};
 
-class MainMenu : public BaseScreen {
-  // This class will inherit from the above base screen
-  // because the upper BaseScreen class will have multiple defined constructors.
-};
+class GameSelect : public BaseScreen {};
 
-class GameSelect : public BaseScreen {
-  // Same here, will come back here to put the attributes and properties
-};
-
-class SetDiffScreen : public BaseScreen {
-  // This class will help us to set the difficulty from.
-};
+class SetDiffScreen : public BaseScreen {};
 
 class AnalyticsScreen : public BaseScreen {};
 
-class GameAnalyticsScreen : public BaseScreen {
-  // This will show individual game states not the general overall states.
-};
+class GameAnalyticsScreen : public BaseScreen {};
 
 class PauseScreen : public BaseScreen {};
 
 class ResultScreen : public BaseScreen {};
 
-//--------------------- Main Game Logic Nut Bolts
-
 class StatisticsManager {
-
 private:
   GameStat allGames[5];
-
   std::string SaveFileName;
   int totalGamesPlayed;
 
@@ -93,52 +70,33 @@ public:
   }
 
   bool ReadFromFile() {
-
     std::fstream Input(SaveFileName);
-
     if (!Input.is_open()) {
-
       std::cout << "The file is not opened properly" << std::endl;
-
       return false;
     } else {
-
       for (int i = 0; i < 5; i++) {
-
         std::getline(Input, allGames[i].gameName);
-
         Input >> allGames[i].scoreCount;
-
         Input >> allGames[i].highScore;
-
         Input >> allGames[i].playCount;
-
         for (int j = 0; j < allGames[i].scoreCount; j++) {
-
           Input >> allGames[i].scores[j];
         }
-
         Input.ignore();
       }
     }
     Input.close();
-
     return true;
   }
 
   bool SaveToFile() {
-
     std::ofstream outputFile(SaveFileName);
-
-    std::fstream Input(SaveFileName);
-
     if (!outputFile.is_open()) {
       std::cout << "Error: Could not open file for writing." << std::endl;
       return false;
     } else {
-
       for (int i = 0; i < 5; i++) {
-
         std::string GameName = allGames[i].gameName;
         int scoreCount = allGames[i].scoreCount;
         int highScore = allGames[i].highScore;
@@ -152,83 +110,66 @@ public:
         for (int j = 0; j < scoreCount; j++) {
           outputFile << allGames[i].scores[j] << " ";
         }
-
         outputFile << "\n";
       }
     }
+    outputFile.close();
+    return true;
   }
 
-  void SetScore(int GameIndex, int Score) {
-
-  };
+  void SetScore(int GameIndex, int Score) {};
 
   void SaveScore(int gameindex, int score) {
-
     if (gameindex > 4 || gameindex < 0) {
       std::cout << "the game index is invalid please enter teh right index"
                 << std::endl;
       return;
-    }
-
-    else if (allGames[gameindex].scoreCount >= 100) {
+    } else if (allGames[gameindex].scoreCount >= 100) {
       std::cout << "the score count is full cannot add more scores"
                 << std::endl;
-    }
-
-    else {
+    } else {
       int temp_score_count = allGames[gameindex].scoreCount;
-
       allGames[gameindex].scores[temp_score_count] = score;
-
       allGames[gameindex].scoreCount++;
     }
 
     if (score > allGames[gameindex].highScore) {
-
       allGames[gameindex].highScore = score;
     }
-
     allGames[gameindex].playCount++;
-
     SaveToFile();
   }
+
   double GetBestScore(int GameIndex) { return allGames[GameIndex].highScore; }
 
   int GetScoreHistory(int GameIndex, int outputArray[]) {
-
     int count = allGames[GameIndex].scoreCount;
-
     for (int i = 0; i < count; i++) {
       outputArray[i] = allGames[GameIndex].scores[i];
     }
-
     return count;
   }
 
   int GetGamesPlayedCount() {
-
-    int allgames = 0;
-
-    for (int i = 0; i < 4; i++) {
-
-      allgames = +allGames[i].playCount;
+    int total = 0;
+    for (int i = 0; i < 5; i++) {
+      total += allGames[i].playCount;
     }
-    return allgames;
+    return total;
   }
 
   double GetAverageScore(int GameIndex) {
+    if (allGames[GameIndex].scoreCount == 0)
+      return 0.0;
     double scoresum = 0;
-
     for (int i = 0; i < allGames[GameIndex].scoreCount; i++) {
-
       scoresum += allGames[GameIndex].scores[i];
     }
     double average = scoresum / allGames[GameIndex].scoreCount;
-
     return average;
   }
-  void ResestStats(int GameIndex) {
 
+  void ResetStats(int GameIndex) {
     allGames[GameIndex].scoreCount = 0;
     allGames[GameIndex].highScore = 0;
     allGames[GameIndex].playCount = 0;
@@ -236,7 +177,8 @@ public:
   }
 
   double GetLastBestScore(int GameIndex) {
-
+    if (allGames[GameIndex].scoreCount == 0)
+      return 0;
     int lastIndex = allGames[GameIndex].scoreCount - 1;
     return allGames[GameIndex].scores[lastIndex];
   }
@@ -313,7 +255,6 @@ public:
   void UpdateTimer(double ChangeInTime) {
     if (TimerActive && !IsPaused) {
       GameTimer += ChangeInTime;
-
       if (IsTimeUp()) {
         EndGame();
       }
@@ -321,9 +262,7 @@ public:
   }
 
   void PauseTimer() { TimerActive = false; }
-
   void ResumeTimer() { TimerActive = true; }
-
   double GetElapsedTime() { return GameTimer; }
 
   double GetRemainingTime() {
@@ -364,7 +303,6 @@ public:
 
   void SetDifficulty(std::string GivenDifficulty) {
     difficultyLevel = GivenDifficulty;
-
     if (GivenDifficulty == "Easy") {
       ScoreMultiplier = 1.0;
     } else if (GivenDifficulty == "Medium") {
@@ -378,22 +316,15 @@ public:
   }
 
   std::string GetDifficulty() { return difficultyLevel; }
-
   double GetScoreMultiplier() { return ScoreMultiplier; }
 
   void EndGame() {
     IsGameOver = true;
     TimerActive = false;
-
     std::cout << "Game Over! Final Score: " << currentScore << std::endl;
-
     if (InternalGameStatistics != nullptr) {
-      // InternalGameStatistics->SaveScore(gameName, currentScore);
-
-      StatisticsManager::SaveScore(currentScore);
+      InternalGameStatistics->SaveScore(0, currentScore);
     }
-
-    // TODO: Switch to ResultsScreen via ScreenManager
   }
 
   void RestartGame() {
@@ -402,37 +333,26 @@ public:
     IsPaused = false;
     IsGameOver = false;
     StartTimer();
-
     std::cout << "Game Restarted" << std::endl;
   }
 
   bool CheckIfGameOver() { return IsGameOver; }
-
   bool IsGameActive() { return !IsPaused && !IsGameOver; }
 
-  virtual void HandleInput(std::string Event_Name) = 0;
-
+  virtual void HandleInput() = 0;
   virtual void Update(double TimeChange) { UpdateTimer(TimeChange); }
-
   virtual void DisplayOutput() = 0;
-
   virtual ~BaseGame() {}
 };
 
-class Button {
-  // This will draw different buttons on the screen.
-  // I might add methods for button pressed and actions etc
-  // There might be child instances of this class like pause button, menu
-  // button etc
-};
+class Button {};
 
 class MemoryMatch : public BaseGame {
 private:
   std::vector<int> sequence;
   std::vector<int> playerInput;
-
   bool isShowingPattern;
-  double messageTimer; // screen)
+  double messageTimer;
 
   void AddToSequence() {
     int nextNum = (rand() % 4) + 1;
@@ -442,78 +362,29 @@ private:
 public:
   MemoryMatch(std::string difficulty, StatisticsManager *stats)
       : BaseGame(difficulty, 0.0, stats) {
-
     isShowingPattern = true;
     messageTimer = 0.0;
-
     AddToSequence();
     AddToSequence();
     AddToSequence();
   }
 
-  void Update(double deltaTime) {
+  void Update(double deltaTime) override { BaseGame::Update(deltaTime); };
 
-    if (is) {
-    }
-  };
-  void HandleInput() {
-
-    if (isShowingPattern == true) {
-
-      return;
-
-    }
-
-    else {
-
-      for (int i = 0; i < sequence.size(); i++) {
-
-        int user_guess = 0;
-
-        std::cin >> user_guess;
-
-        if (user_guess == sequence[i]) {
-          std::cout << "Matched" << std::endl;
-
-        } else {
-
-          std::cout << "Game Over!" << std::endl;
-
-          EndGame();
-
-          return;
-        }
-      }
-
-      AddScore(100);
-      AddToSequence();
-
-      isShowingPattern = true;
-    }
-  };
-
-  void Render() {
+  void DisplayOutput() override {
     if (isShowingPattern == true) {
       system("cls");
-
       std::cout << "Memorize This Sequence..." << std::endl;
-
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
       for (int i = 0; i < sequence.size(); i++) {
         system("cls");
-
         std::cout << "\n\n   " << sequence[i] << "   \n\n";
-
         std::this_thread::sleep_for(std::chrono::seconds(1));
-
         system("cls");
-
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
-
       isShowingPattern = false;
-
     } else {
       std::cout << "Welcome To Memory Match" << std::endl;
       std::cout << "Current difficulty: " << GetDifficulty() << std::endl;
@@ -521,30 +392,125 @@ public:
     }
   }
 
-  class MathSpeedGame : public BaseGame {};
+  void HandleInput() override {
+    if (isShowingPattern == true) {
+      return;
+    } else {
+      for (int i = 0; i < sequence.size(); i++) {
+        int user_guess = 0;
+        std::cin >> user_guess;
 
-  class ReactionTime : public BaseGame {};
+        if (std::cin.fail()) {
+          std::cin.clear();
+          std::cin.ignore(10000, '\n');
+          std::cout << "Invalid Input" << std::endl;
+          EndGame();
+          return;
+        }
 
-  class CardMatchingGame : public BaseGame {};
-
-  class StroopTestGame : public BaseGame {
-    // Might remove this later
+        if (user_guess == sequence[i]) {
+          std::cout << "Matched" << std::endl;
+        } else {
+          std::cout << "Game Over!" << std::endl;
+          EndGame();
+          return;
+        }
+      }
+      AddScore(100);
+      AddToSequence();
+      isShowingPattern = true;
+    }
   };
+};
 
-  //----------------------------- Small Helper Classes
-  //-----------------------------//
+class MathSpeedGame : public BaseGame {
+  void HandleInput() override {}
+  void DisplayOutput() override {}
+};
 
-  class AssestManger {
-    // This class is for grabbing graphics, fonts and other material for
-    // display.
-  };
+class ReactionTime : public BaseGame {
+  void HandleInput() override {}
+  void DisplayOutput() override {}
+};
 
-  class Engine {
-    // This class will handle all the operations.
-    // 1. Like creating game screens
-    // 2. Manages main SFML windows when we implement the UI.
-    // 3. Will directly communicate with the screen manager class.
-    // 4. Will manage global events like click and updates.
-    // When this class will be triggered it will only hold a single instance of
-    // screen/statistics.
-  };
+class CardMatchingGame : public BaseGame {
+  void HandleInput() override {}
+  void DisplayOutput() override {}
+};
+
+class StroopTestGame : public BaseGame {
+  void HandleInput() override {}
+  void DisplayOutput() override {}
+};
+
+class AssestManger {};
+
+class Engine {
+private:
+  StatisticsManager statsManager;
+
+  void StartGameSession() {
+    std::cout << "Select Difficulty (Easy, Medium, Hard): ";
+    std::string diff;
+    std::cin >> diff;
+
+    MemoryMatch game(diff, &statsManager);
+    game.StartTimer();
+
+    while (game.IsGameActive()) {
+      game.DisplayOutput();
+      game.HandleInput();
+      game.Update(0.0);
+    }
+    system("pause");
+  }
+
+  void ShowAnalytics() {
+    std::cout << "Showing Analytics..." << std::endl;
+    system("pause");
+  }
+
+public:
+  Engine() : statsManager("game_data.txt") { statsManager.ReadFromFile(); }
+
+  void Run() {
+    bool appRunning = true;
+    while (appRunning) {
+      system("cls");
+      std::cout << "=============================" << std::endl;
+      std::cout << "      BRAIN GAMES ENGINE     " << std::endl;
+      std::cout << "=============================" << std::endl;
+      std::cout << "1. Play Game" << std::endl;
+      std::cout << "2. View Analytics" << std::endl;
+      std::cout << "3. Exit" << std::endl;
+      std::cout << "=============================" << std::endl;
+      std::cout << "Enter your choice: ";
+
+      int choice;
+      std::cin >> choice;
+
+      switch (choice) {
+      case 1:
+        StartGameSession();
+        break;
+      case 2:
+        ShowAnalytics();
+        break;
+      case 3:
+        appRunning = false;
+        std::cout << "Goodbye!" << std::endl;
+        break;
+      default:
+        std::cout << "Invalid choice. Try again." << std::endl;
+        break;
+      }
+    }
+  }
+};
+
+int main() {
+  srand(time(0));
+  Engine engine;
+  engine.Run();
+  return 0;
+}
