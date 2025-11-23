@@ -8,7 +8,6 @@
 #include <thread>
 #include <vector>
 
-// Data structure to hold stats for a single game
 class GameStat {
 public:
   std::string gameName;
@@ -18,7 +17,7 @@ public:
   int scoreCount;
 };
 
-// --- Screen Placeholders (Future GUI use) ---
+// for Gui Use Latter
 class BaseScreen {};
 class MainMenu : public BaseScreen {};
 class GameSelect : public BaseScreen {};
@@ -28,7 +27,6 @@ class GameAnalyticsScreen : public BaseScreen {};
 class PauseScreen : public BaseScreen {};
 class ResultScreen : public BaseScreen {};
 
-// --- Statistics Manager ---
 class StatisticsManager {
 private:
   GameStat allGames[5];
@@ -39,7 +37,6 @@ public:
   StatisticsManager(std::string saveFileName = "game_stats.txt")
       : SaveFileName(saveFileName), totalGamesPlayed(0) {
 
-    // Initialize all 5 games
     allGames[0].gameName = "MemoryMatch";
     allGames[0].scoreCount = 0;
     allGames[0].highScore = 0;
@@ -80,7 +77,7 @@ public:
         for (int j = 0; j < allGames[i].scoreCount; j++) {
           Input >> allGames[i].scores[j];
         }
-        Input.ignore(); // Consume the newline after reading scores
+        Input.ignore();
       }
     }
     Input.close();
@@ -154,7 +151,6 @@ public:
     return total;
   }
 
-  // New Helper: Get play count for a specific game
   int GetGameSpecificPlayCount(int GameIndex) {
 
     return allGames[GameIndex].playCount;
@@ -192,12 +188,8 @@ public:
   }
 };
 
-// --- Base Game Class ---
 class BaseGame {
 private:
-  int currentScore;
-  double GameTimer;
-  double TimeLimit;
   double ScoreMultiplier;
   bool IsPaused;
   bool IsGameOver;
@@ -206,7 +198,9 @@ private:
 
 public:
   StatisticsManager *InternalGameStatistics;
-
+  int currentScore;
+  double GameTimer;
+  double TimeLimit;
   BaseGame()
       : currentScore(0), GameTimer(0.0), TimeLimit(0.0), ScoreMultiplier(1.0),
         IsPaused(false), IsGameOver(false), TimerActive(false),
@@ -280,7 +274,6 @@ public:
   virtual ~BaseGame() {}
 };
 
-// --- Memory Match Game ---
 class MemoryMatch : public BaseGame {
 private:
   std::vector<int> sequence;
@@ -357,9 +350,88 @@ public:
 };
 
 class MathSpeedGame : public BaseGame {
-  void HandleInput() override {}
-  void DisplayOutput() override {}
+private:
+  int a;
+  int b;
+  std::string displaying_equation;
+  std::string operations_array[3] = {"+", "-", "*"};
+  int correct_answer = 0;
+
+public:
+  MathSpeedGame(std::string difficulty, StatisticsManager *stats)
+      : BaseGame(difficulty, 60.0, stats) {
+    CreateProblem(difficulty);
+  }
+
+  void CreateProblem(std::string difficulty) {
+    int max_num = 10;
+
+    if (difficulty == "Medium") {
+      max_num = 20;
+    }
+    if (difficulty == "Hard") {
+      max_num = 50;
+    }
+
+    a = (rand() % max_num) + 1;
+    b = (rand() % max_num) + 1;
+
+    int op_index = rand() % 3;
+    std::string op_symbol = operations_array[op_index];
+
+    if (op_symbol == "+") {
+      correct_answer = a + b;
+    } else if (op_symbol == "-") {
+      correct_answer = a - b;
+    } else {
+      correct_answer = a * b;
+    }
+
+    displaying_equation =
+        std::to_string(a) + " " + op_symbol + " " + std::to_string(b) + " = ?";
+  }
+
+  void Update(double deltaTime) override { BaseGame::Update(deltaTime); }
+
+  void DisplayOutput() override {
+    system("cls");
+    std::cout << "MATH SPEED GAME" << std::endl;
+    double remaining = TimeLimit - GameTimer;
+    if (remaining < 0)
+      remaining = 0;
+    std::cout << "Time: " << remaining << " seconds" << std::endl;
+    std::cout << "Score: " << currentScore << std::endl;
+
+    std::cout << "\nSolve: " << displaying_equation << "\n" << std::endl;
+    std::cout << "Answer: ";
+  }
+
+  void HandleInput() override {
+    int user_input;
+    std::cin >> user_input;
+
+    if (std::cin.fail()) {
+      std::cin.clear();
+      std::cin.ignore(10000, '\n');
+      return;
+    }
+
+    if (user_input == correct_answer) {
+      std::cout << "Correct!" << std::endl;
+      AddScore(100);
+      CreateProblem(GetDifficulty());
+    } else {
+      std::cout << "Wrong!" << std::endl;
+      // Subtract points by adding negative value since SubtractPoint() doesn't
+      // exist
+      AddScore(-20);
+      CreateProblem(GetDifficulty());
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  }
 };
+
 class ReactionTime : public BaseGame {
   void HandleInput() override {}
   void DisplayOutput() override {}
@@ -373,7 +445,6 @@ class StroopTestGame : public BaseGame {
   void DisplayOutput() override {}
 };
 
-// --- Engine ---
 class Engine {
 private:
   StatisticsManager statsManager;
@@ -385,7 +456,8 @@ private:
 
     // Abhi MemoryMatch ke lie sirf hard code kia hua hai baad me change hoga
     // yee!
-    MemoryMatch game(diff, &statsManager);
+    // MemoryMatch game(diff, &statsManager);
+    MathSpeedGame game(diff, &statsManager);
     game.StartTimer();
 
     while (game.IsGameActive()) {
@@ -400,7 +472,6 @@ private:
     system("cls");
     std::cout << "Total Games Played (All Types): "
               << statsManager.GetGamesPlayedCount() << std::endl;
-    std::cout << "-----------------------------" << std::endl;
 
     for (int i = 0; i < 5; i++) {
       std::cout << "Game: " << statsManager.GetGameName(i) << std::endl;
