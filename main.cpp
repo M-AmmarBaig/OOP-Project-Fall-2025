@@ -152,7 +152,6 @@ public:
   }
 
   int GetGameSpecificPlayCount(int GameIndex) {
-
     return allGames[GameIndex].playCount;
   }
 
@@ -172,7 +171,6 @@ public:
   }
 
   void ResetStats(int GameIndex) {
-
     allGames[GameIndex].scoreCount = 0;
     allGames[GameIndex].highScore = 0;
     allGames[GameIndex].playCount = 0;
@@ -180,7 +178,6 @@ public:
   }
 
   double GetLastBestScore(int GameIndex) {
-
     if (allGames[GameIndex].scoreCount == 0)
       return 0;
     int lastIndex = allGames[GameIndex].scoreCount - 1;
@@ -195,23 +192,25 @@ private:
   bool IsGameOver;
   bool TimerActive;
   std::string difficultyLevel;
+  int gameIndex;
 
 public:
   StatisticsManager *InternalGameStatistics;
   int currentScore;
   double GameTimer;
   double TimeLimit;
+
   BaseGame()
       : currentScore(0), GameTimer(0.0), TimeLimit(0.0), ScoreMultiplier(1.0),
         IsPaused(false), IsGameOver(false), TimerActive(false),
-        difficultyLevel("Easy"), InternalGameStatistics(nullptr) {}
+        difficultyLevel("Easy"), InternalGameStatistics(nullptr), gameIndex(0) {
+  }
 
   BaseGame(std::string difficulty, double TimeLimit,
-           StatisticsManager *statsManager)
+           StatisticsManager *statsManager, int GameIndex)
       : currentScore(0), GameTimer(0.0), TimeLimit(TimeLimit), IsPaused(false),
         IsGameOver(false), TimerActive(false), difficultyLevel(difficulty),
-        InternalGameStatistics(statsManager) {
-
+        InternalGameStatistics(statsManager), gameIndex(GameIndex) {
     SetDifficulty(difficulty);
   }
 
@@ -260,9 +259,7 @@ public:
     TimerActive = false;
     std::cout << "Game Over! Final Score: " << currentScore << std::endl;
     if (InternalGameStatistics != nullptr) {
-      // abhi memeory match me sirf score store kerha hu cuz baki ke games
-      // create  nhi kie hye hai
-      InternalGameStatistics->SaveScore(0, currentScore);
+      InternalGameStatistics->SaveScore(gameIndex, currentScore);
     }
   }
 
@@ -287,7 +284,7 @@ private:
 
 public:
   MemoryMatch(std::string difficulty, StatisticsManager *stats)
-      : BaseGame(difficulty, 0.0, stats) {
+      : BaseGame(difficulty, 0.0, stats, 0) { // Index 0 for MemoryMatch
     isShowingPattern = true;
     messageTimer = 0.0;
     AddToSequence();
@@ -359,7 +356,7 @@ private:
 
 public:
   MathSpeedGame(std::string difficulty, StatisticsManager *stats)
-      : BaseGame(difficulty, 60.0, stats) {
+      : BaseGame(difficulty, 60.0, stats, 1) { // Index 1 for MathSpeed
     CreateProblem(difficulty);
   }
 
@@ -399,7 +396,7 @@ public:
     double remaining = TimeLimit - GameTimer;
     if (remaining < 0)
       remaining = 0;
-    std::cout << "Time: " << remaining << " seconds" << std::endl;
+    std::cout << "Time: " << (int)remaining << " seconds" << std::endl;
     std::cout << "Score: " << currentScore << std::endl;
 
     std::cout << "\nSolve: " << displaying_equation << "\n" << std::endl;
@@ -422,13 +419,11 @@ public:
       CreateProblem(GetDifficulty());
     } else {
       std::cout << "Wrong!" << std::endl;
-      // Subtract points by adding negative value since SubtractPoint() doesn't
-      // exist
       AddScore(-20);
       CreateProblem(GetDifficulty());
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(800));
   }
 };
 
@@ -454,16 +449,20 @@ private:
     std::string diff;
     std::cin >> diff;
 
-    // Abhi MemoryMatch ke lie sirf hard code kia hua hai baad me change hoga
-    // yee!
-    // MemoryMatch game(diff, &statsManager);
     MathSpeedGame game(diff, &statsManager);
     game.StartTimer();
 
+    auto lastTime = std::chrono::steady_clock::now();
+
     while (game.IsGameActive()) {
+      auto currentTime = std::chrono::steady_clock::now();
+      std::chrono::duration<double> elapsed = currentTime - lastTime;
+      double deltaTime = elapsed.count();
+      lastTime = currentTime;
+
+      game.Update(deltaTime);
       game.DisplayOutput();
       game.HandleInput();
-      game.Update(0.0);
     }
     system("pause");
   }
@@ -474,7 +473,7 @@ private:
               << statsManager.GetGamesPlayedCount() << std::endl;
 
     for (int i = 0; i < 5; i++) {
-      std::cout << "Game: " << statsManager.GetGameName(i) << std::endl;
+      std::cout << "\nGame: " << statsManager.GetGameName(i) << std::endl;
       std::cout << "  High Score:    " << statsManager.GetBestScore(i)
                 << std::endl;
       std::cout << "  Average Score: " << statsManager.GetAverageScore(i)
