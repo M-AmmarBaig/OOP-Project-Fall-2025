@@ -1,0 +1,22 @@
+# --- Binaries & Dependencies ---
+# Ignore all DLLs (SFML files)
+*.dll
+
+# --- Build Artifacts ---
+# Ignore executables
+*.exe
+*.out
+*.app
+
+# Ignore intermediate object files (created during compilation)
+*.o
+*.obj
+
+# --- Local Data ---
+# Ignore the statistics save file (so your local scores don't push to GitHub)
+game_data.txt
+
+# --- IDE & Editor Settings ---
+# Ignore VS Code / Clangd settings
+.vscode/
+.clangd
