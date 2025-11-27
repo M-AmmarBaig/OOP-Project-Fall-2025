@@ -1,0 +1,24 @@
+#ifndef MATHSPEEDGAME_H
+#define MATHSPEEDGAME_H
+
+#include "BaseGame.h"
+#include <string>
+
+class MathSpeedGame : public BaseGame {
+private:
+  int a;
+  int b;
+  std::string displaying_equation;
+  std::string operations_array[3] = {"+", "-", "*"};
+  int correct_answer;
+
+  void CreateProblem(std::string difficulty);
+
+public:
+  MathSpeedGame(std::string difficulty, StatisticsManager *stats);
+  void Update(double deltaTime) override;
+  void DisplayOutput() override;
+  void HandleInput() override;
+};
+
+#endif
