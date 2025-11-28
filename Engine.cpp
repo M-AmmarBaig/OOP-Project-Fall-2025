@@ -7,7 +7,7 @@ Engine::Engine() : statsManager("game_data.txt") {
     window.create(sf::VideoMode({540, 960}), "Brain Games Engine");
     window.setFramerateLimit(60);
 
-    if (!mainFont.openFromFile("arial.ttf")) {
+    if (!mainFont.openFromFile("JetBrainsMonoNerdFont-Bold.ttf")) {
         std::cerr << "CRITICAL ERROR: Could not load arial.ttf" << std::endl;
     }
 

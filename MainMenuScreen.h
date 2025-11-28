@@ -7,7 +7,11 @@ class MainMenuScreen : public BaseScreen {
 private:
     sf::Text titleText;
 
-    // The buttons
+    // --- NEW: Background Variables ---
+    sf::Texture backgroundTexture;
+    sf::Sprite backgroundSprite;
+    // ---------------------------------
+
     Button* playButton;
     Button* analyticsButton;
     Button* exitButton;
