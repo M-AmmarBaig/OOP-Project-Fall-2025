@@ -1,10 +1,10 @@
 #include "Engine.h"
-#include "MainMenuScreen.h" 
+#include "MainMenuScreen.h"
 
 #include <iostream>
 
 Engine::Engine() : statsManager("game_data.txt") {
-    window.create(sf::VideoMode({800, 600}), "Brain Games Engine");
+    window.create(sf::VideoMode({540, 960}), "Brain Games Engine");
     window.setFramerateLimit(60);
 
     if (!mainFont.openFromFile("arial.ttf")) {
