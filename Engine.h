@@ -1,18 +1,26 @@
-#ifndef ENGINE_H
-#define ENGINE_H
-
+#pragma once
+#include <SFML/Graphics.hpp>
 #include "StatisticsManager.h"
+#include "BaseScreen.h"
 
 class Engine {
 private:
-  StatisticsManager statsManager;
+    sf::RenderWindow window;
+    BaseScreen* currentScreen;
 
-  void StartGameSession();
-  void ShowAnalytics();
+    StatisticsManager statsManager;
+
+    sf::Font mainFont;
 
 public:
-  Engine();
-  void Run();
-};
+    Engine();
+    ~Engine();
 
-#endif
+    void run();
+
+    void switchScreen(BaseScreen* newScreen);
+
+    StatisticsManager* getStats() { return &statsManager; }
+    sf::Font* getFont() { return &mainFont; }
+    sf::RenderWindow& getWindow() { return window; }
+};
