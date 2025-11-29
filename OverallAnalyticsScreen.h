@@ -11,7 +11,11 @@ private:
     sf::Text brainScoreLabel;
     sf::Text brainScoreValue;
     sf::Text totalGamesText;
-    sf::Text* gameSummaryTexts[4];
+    
+    sf::RectangleShape barBackgrounds[4];
+    sf::RectangleShape bars[4];
+    sf::Text* gameNameLabels[4];
+    sf::Text* scoreValueLabels[4];
     
     Button* backButton;
     

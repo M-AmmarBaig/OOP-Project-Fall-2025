@@ -3,6 +3,7 @@
 #include "AnalyticsMenuScreen.h"
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 OverallAnalyticsScreen::OverallAnalyticsScreen(Engine* app)
     : BaseScreen(app),
@@ -12,10 +13,6 @@ OverallAnalyticsScreen::OverallAnalyticsScreen(Engine* app)
       brainScoreValue(*app->getFont()),
       totalGamesText(*app->getFont())
 {
-    for (int i = 0; i < 4; i++) {
-        gameSummaryTexts[i] = new sf::Text(*app->getFont());
-    }
-    
     sf::Vector2u windowSize = app->getWindow().getSize();
     float centerX = windowSize.x / 2.0f;
     
@@ -46,9 +43,44 @@ OverallAnalyticsScreen::OverallAnalyticsScreen(Engine* app)
     totalGamesText.setCharacterSize(20);
     totalGamesText.setFillColor(sf::Color::White);
     
+    const char* gameNames[] = {"Memory\nMatch", "Math\nSpeed", "Reaction\nTime", "Stroop\nTest"};
+    sf::Color barColors[] = {
+        sf::Color(150, 100, 200),  // Purple
+        sf::Color(200, 150, 50),   // Orange
+        sf::Color(50, 200, 100),   // Green
+        sf::Color(200, 100, 200)   // Pink
+    };
+    
+    float barWidth = 60.f;
+    float barSpacing = 90.f;
+    float chartStartX = centerX - (barSpacing * 1.5f);
+    float chartY = 480.f;
+    
     for (int i = 0; i < 4; i++) {
-        gameSummaryTexts[i]->setCharacterSize(18);
-        gameSummaryTexts[i]->setFillColor(sf::Color(200, 200, 200));
+        float barX = chartStartX + (i * barSpacing);
+        
+        barBackgrounds[i].setSize({barWidth, 200.f});
+        barBackgrounds[i].setPosition({barX, chartY});
+        barBackgrounds[i].setFillColor(sf::Color(40, 40, 40));
+        barBackgrounds[i].setOutlineColor(sf::Color(80, 80, 80));
+        barBackgrounds[i].setOutlineThickness(2.f);
+        
+        bars[i].setSize({barWidth, 0.f});
+        bars[i].setPosition({barX, chartY + 200.f});
+        bars[i].setFillColor(barColors[i]);
+        
+        gameNameLabels[i] = new sf::Text(*app->getFont());
+        gameNameLabels[i]->setString(gameNames[i]);
+        gameNameLabels[i]->setCharacterSize(14);
+        gameNameLabels[i]->setFillColor(sf::Color::White);
+        sf::FloatRect nameBounds = gameNameLabels[i]->getLocalBounds();
+        gameNameLabels[i]->setOrigin({nameBounds.size.x / 2.0f, 0.f});
+        gameNameLabels[i]->setPosition({barX + barWidth / 2.0f, chartY + 210.f});
+        
+        scoreValueLabels[i] = new sf::Text(*app->getFont());
+        scoreValueLabels[i]->setCharacterSize(16);
+        scoreValueLabels[i]->setFillColor(sf::Color::White);
+        scoreValueLabels[i]->setStyle(sf::Text::Bold);
     }
     
     backButton = new Button(
@@ -64,7 +96,8 @@ OverallAnalyticsScreen::OverallAnalyticsScreen(Engine* app)
 
 OverallAnalyticsScreen::~OverallAnalyticsScreen() {
     for (int i = 0; i < 4; i++) {
-        delete gameSummaryTexts[i];
+        delete gameNameLabels[i];
+        delete scoreValueLabels[i];
     }
     delete backButton;
 }
@@ -72,7 +105,7 @@ OverallAnalyticsScreen::~OverallAnalyticsScreen() {
 int OverallAnalyticsScreen::calculateBrainScore() {
     int totalScore = 0;
     int gamesWithData = 0;
-   // only working for memory match game on the other games it is not showing anything 
+    
     for (int i = 0; i < 4; i++) {
         int playCount = stats->GetGameSpecificPlayCount(i);
         if (playCount > 0) {
@@ -113,7 +146,7 @@ void OverallAnalyticsScreen::update(sf::Time deltaTime) {
     sf::FloatRect scoreBounds = brainScoreValue.getLocalBounds();
     brainScoreValue.setOrigin({scoreBounds.size.x / 2.0f, scoreBounds.size.y / 2.0f});
     brainScoreValue.setPosition({centerX, 155.f});
-    //not getting any value for some games at all.
+    
     std::ostringstream totalStream;
     totalStream << "Total Games Played: " << stats->GetGamesPlayedCount();
     totalGamesText.setString(totalStream.str());
@@ -122,28 +155,39 @@ void OverallAnalyticsScreen::update(sf::Time deltaTime) {
     totalGamesText.setOrigin({totalBounds.size.x / 2.0f, totalBounds.size.y / 2.0f});
     totalGamesText.setPosition({centerX, 220.f});
     
-    const char* gameNames[] = {"Memory Match", "Math Speed", "Reaction Time", "Stroop Test"};
-    float startY = 280.f;
+    // Update bar chart
+    float maxScore = 1.0f;  // Prevent division by zero
+    for (int i = 0; i < 4; i++) {
+        float score = static_cast<float>(stats->GetBestScore(i));
+        if (score > maxScore) {
+            maxScore = score;
+        }
+    }
+    
+    float maxBarHeight = 200.f;
+    float barWidth = 60.f;
+    float barSpacing = 90.f;
+    float chartStartX = centerX - (barSpacing * 1.5f);
+    float chartY = 480.f;
     
     for (int i = 0; i < 4; i++) {
-        std::ostringstream summaryStream;
-        summaryStream << gameNames[i] << ": ";
+        float score = static_cast<float>(stats->GetBestScore(i));
+        float normalizedHeight = (score / maxScore) * maxBarHeight;
         
-        int playCount = stats->GetGameSpecificPlayCount(i);
-        if (playCount > 0) {
-            summaryStream << "Best=" << static_cast<int>(stats->GetBestScore(i))
-                         << " | Avg=" << std::fixed << std::setprecision(1) 
-                         << stats->GetAverageScore(i)
-                         << " | Played=" << playCount;
-        } else {
-            summaryStream << "Not played yet";
+        if (normalizedHeight < 5.f && score > 0) {
+            normalizedHeight = 5.f;  
         }
         
-        gameSummaryTexts[i]->setString(summaryStream.str());
+        bars[i].setSize({barWidth, normalizedHeight});
+        bars[i].setPosition({chartStartX + (i * barSpacing), chartY + maxBarHeight - normalizedHeight});
         
-        sf::FloatRect gameBounds = gameSummaryTexts[i]->getLocalBounds();
-        gameSummaryTexts[i]->setOrigin({gameBounds.size.x / 2.0f, gameBounds.size.y / 2.0f});
-        gameSummaryTexts[i]->setPosition({centerX, startY + (i * 50.f)});
+        std::ostringstream valueStream;
+        valueStream << static_cast<int>(score);
+        scoreValueLabels[i]->setString(valueStream.str());
+        
+        sf::FloatRect valueBounds = scoreValueLabels[i]->getLocalBounds();
+        scoreValueLabels[i]->setOrigin({valueBounds.size.x / 2.0f, valueBounds.size.y});
+        scoreValueLabels[i]->setPosition({chartStartX + (i * barSpacing) + barWidth / 2.0f, chartY + maxBarHeight - normalizedHeight - 5.f});
     }
     
     sf::Vector2i mousePos = sf::Mouse::getPosition(engine->getWindow());
@@ -157,7 +201,10 @@ void OverallAnalyticsScreen::render(sf::RenderWindow& window) {
     window.draw(totalGamesText);
     
     for (int i = 0; i < 4; i++) {
-        window.draw(*gameSummaryTexts[i]);
+        window.draw(barBackgrounds[i]);
+        window.draw(bars[i]);
+        window.draw(*gameNameLabels[i]);
+        window.draw(*scoreValueLabels[i]);
     }
     
     backButton->render(window);
