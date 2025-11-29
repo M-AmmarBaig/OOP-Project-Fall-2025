@@ -72,7 +72,7 @@ OverallAnalyticsScreen::~OverallAnalyticsScreen() {
 int OverallAnalyticsScreen::calculateBrainScore() {
     int totalScore = 0;
     int gamesWithData = 0;
-    
+   // only working for memory match game on the other games it is not showing anything 
     for (int i = 0; i < 4; i++) {
         int playCount = stats->GetGameSpecificPlayCount(i);
         if (playCount > 0) {
@@ -113,7 +113,7 @@ void OverallAnalyticsScreen::update(sf::Time deltaTime) {
     sf::FloatRect scoreBounds = brainScoreValue.getLocalBounds();
     brainScoreValue.setOrigin({scoreBounds.size.x / 2.0f, scoreBounds.size.y / 2.0f});
     brainScoreValue.setPosition({centerX, 155.f});
-    
+    //not getting any value for some games at all.
     std::ostringstream totalStream;
     totalStream << "Total Games Played: " << stats->GetGamesPlayedCount();
     totalGamesText.setString(totalStream.str());

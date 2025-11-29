@@ -1,6 +1,7 @@
 #include "StatisticsManager.h"
 #include <fstream>
 #include <iostream>
+#include <limits>
 
 StatisticsManager::StatisticsManager(std::string saveFileName)
     : SaveFileName(saveFileName), totalGamesPlayed(0) {
@@ -20,12 +21,12 @@ StatisticsManager::StatisticsManager(std::string saveFileName)
   allGames[2].highScore = 0;
   allGames[2].playCount = 0;
 
-  allGames[3].gameName = "CardsMatching";
+  allGames[3].gameName = "StroopTest";
   allGames[3].scoreCount = 0;
   allGames[3].highScore = 0;
   allGames[3].playCount = 0;
-
-  allGames[4].gameName = "StroopTest";
+//use nhi kerha abhi since we are not doing a 5th game 
+  allGames[4].gameName = "";
   allGames[4].scoreCount = 0;
   allGames[4].highScore = 0;
   allGames[4].playCount = 0;
@@ -38,14 +39,16 @@ bool StatisticsManager::ReadFromFile() {
     return false;
   } else {
     for (int i = 0; i < 5; i++) {
-      std::getline(Input, allGames[i].gameName);
+      std::string tempName;
+      std::getline(Input, tempName);
+      
       Input >> allGames[i].scoreCount;
       Input >> allGames[i].highScore;
       Input >> allGames[i].playCount;
       for (int j = 0; j < allGames[i].scoreCount; j++) {
         Input >> allGames[i].scores[j];
       }
-      Input.ignore();
+      Input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
   }
   Input.close();

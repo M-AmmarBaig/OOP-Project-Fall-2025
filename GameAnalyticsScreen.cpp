@@ -34,7 +34,7 @@ GameAnalyticsScreen::GameAnalyticsScreen(Engine* app, int gameIdx)
     sf::FloatRect titleBounds = titleText.getLocalBounds();
     titleText.setOrigin({titleBounds.size.x / 2.0f, titleBounds.size.y / 2.0f});
     titleText.setPosition({centerX, 50.f});
-    
+   //this is not fetcing the name properly or some games  
     gameNameText.setString(stats->GetGameName(gameIndex));
     gameNameText.setCharacterSize(28);
     gameNameText.setFillColor(sf::Color::Yellow);
@@ -89,7 +89,7 @@ void GameAnalyticsScreen::handleInput(const sf::Event& event, sf::RenderWindow& 
 
 void GameAnalyticsScreen::update(sf::Time deltaTime) {
     float centerX = engine->getWindow().getSize().x / 2.0f;
-    
+    //this is also not working propelry score sahi se fetch nhi kerha hai ye
     std::ostringstream highStream;
     highStream << "High Score: " << static_cast<int>(stats->GetBestScore(gameIndex));
     highScoreText.setString(highStream.str());
