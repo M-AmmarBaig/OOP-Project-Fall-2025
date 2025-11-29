@@ -8,6 +8,7 @@ class SoundManager {
 private:
     sf::SoundBuffer buttonClickBuffer;
     sf::Sound buttonClickSound;
+    sf::Music backgroundMusic;
 
 public:
     SoundManager();
@@ -15,6 +16,12 @@ public:
 
     bool loadButtonClickSound(const std::string& filename);
     void playButtonClick();
+
+    bool loadBackgroundMusic(const std::string& filename);
+    void playBackgroundMusic();
+    void pauseBackgroundMusic();
+    void stopBackgroundMusic();
+    void setMusicVolume(float volume);
 };
 
 #endif
