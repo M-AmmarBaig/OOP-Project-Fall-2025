@@ -1,5 +1,6 @@
 #include "MainMenuScreen.h"
 #include "GameSelectScreen.h"
+#include "AnalyticsMenuScreen.h"
 #include "Engine.h"
 #include <iostream>
 
@@ -83,6 +84,7 @@ void MainMenuScreen::handleInput(const sf::Event &event,
       }
       if (analyticsButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
         std::cout << "Switching to Analytics..." << std::endl;
+        engine->switchScreen(new AnalyticsMenuScreen(engine));
       }
       if (exitButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
         window.close();
