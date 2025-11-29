@@ -9,6 +9,7 @@ private:
     Button* memoryMatchButton;
     Button* mathSpeedButton;
     Button* reactionTimeButton;
+    Button* stroopTestButton;
     Button* backButton;
 
 public:

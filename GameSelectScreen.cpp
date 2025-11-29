@@ -4,6 +4,7 @@
 #include "MemoryMatchScreen.h"
 #include "MathSpeedScreen.h"
 #include "ReactionTimeScreen.h"
+#include "StroopTestScreen.h"
 #include <iostream>
 
 GameSelectScreen::GameSelectScreen(Engine *app)
@@ -53,12 +54,20 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       sf::Color(100, 100, 100), 
       sf::Color(50, 200, 100));  
 
+  stroopTestButton = new Button(
+      btnX, startY + (gap * 3), btnWidth, btnHeight, 
+      app->getFont(),
+      "Stroop Test", 
+      sf::Color(70, 70, 70),
+      sf::Color(100, 100, 100), 
+      sf::Color(200, 100, 200));  
+
   float backBtnWidth = 200.f;
   float backBtnHeight = 60.f;
   float backBtnX = centerX - (backBtnWidth / 2.0f);
   
   backButton = new Button(
-      backBtnX, startY + (gap * 3.5f), backBtnWidth, backBtnHeight,
+      backBtnX, startY + (gap * 4.5f), backBtnWidth, backBtnHeight,
       app->getFont(),
       "Back", 
       sf::Color(70, 70, 70),
@@ -70,6 +79,7 @@ GameSelectScreen::~GameSelectScreen() {
   delete memoryMatchButton;
   delete mathSpeedButton;
   delete reactionTimeButton;
+  delete stroopTestButton;
   delete backButton;
 }
 
@@ -94,6 +104,11 @@ void GameSelectScreen::handleInput(const sf::Event &event,
         engine->switchScreen(new ReactionTimeScreen(engine));
       }
       
+      if (stroopTestButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
+        std::cout << "Launching Stroop Test..." << std::endl;
+        engine->switchScreen(new StroopTestScreen(engine));
+      }
+      
       if (backButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
         std::cout << "Returning to main menu..." << std::endl;
         engine->switchScreen(new MainMenuScreen(engine));
@@ -107,6 +122,7 @@ void GameSelectScreen::update(sf::Time deltaTime) {
   memoryMatchButton->update(mousePos);
   mathSpeedButton->update(mousePos);
   reactionTimeButton->update(mousePos);
+  stroopTestButton->update(mousePos);
   backButton->update(mousePos);
 }
 
@@ -115,5 +131,6 @@ void GameSelectScreen::render(sf::RenderWindow &window) {
   memoryMatchButton->render(window);
   mathSpeedButton->render(window);
   reactionTimeButton->render(window);
+  stroopTestButton->render(window);
   backButton->render(window);
 }
