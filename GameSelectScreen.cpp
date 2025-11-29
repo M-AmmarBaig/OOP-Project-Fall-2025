@@ -1,6 +1,9 @@
 #include "GameSelectScreen.h"
 #include "Engine.h"
 #include "MainMenuScreen.h"
+#include "MemoryMatchScreen.h"
+#include "MathSpeedScreen.h"
+#include "ReactionTimeScreen.h"
 #include <iostream>
 
 GameSelectScreen::GameSelectScreen(Engine *app)
@@ -42,13 +45,20 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       sf::Color(100, 100, 100), 
       sf::Color(200, 150, 50));  
 
+  reactionTimeButton = new Button(
+      btnX, startY + (gap * 2), btnWidth, btnHeight, 
+      app->getFont(),
+      "Reaction Time", 
+      sf::Color(70, 70, 70),
+      sf::Color(100, 100, 100), 
+      sf::Color(50, 200, 100));  
 
   float backBtnWidth = 200.f;
   float backBtnHeight = 60.f;
   float backBtnX = centerX - (backBtnWidth / 2.0f);
   
   backButton = new Button(
-      backBtnX, startY + (gap * 2.5f), backBtnWidth, backBtnHeight,
+      backBtnX, startY + (gap * 3.5f), backBtnWidth, backBtnHeight,
       app->getFont(),
       "Back", 
       sf::Color(70, 70, 70),
@@ -59,6 +69,7 @@ GameSelectScreen::GameSelectScreen(Engine *app)
 GameSelectScreen::~GameSelectScreen() {
   delete memoryMatchButton;
   delete mathSpeedButton;
+  delete reactionTimeButton;
   delete backButton;
 }
 
@@ -69,16 +80,20 @@ void GameSelectScreen::handleInput(const sf::Event &event,
       sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
       if (memoryMatchButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
-        std::cout << "Memory Match selected (not yet implemented)..." << std::endl;
-        // engine->switchScreen(new MemoryMatchScreen(engine));
+        std::cout << "Launching Memory Match..." << std::endl;
+        engine->switchScreen(new MemoryMatchScreen(engine));
       }
       
       if (mathSpeedButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
-        std::cout << "Math Speed selected (not yet implemented)..." << std::endl;
-        // engine->switchScreen(new MathSpeedScreen(engine));
+        std::cout << "Launching Math Speed..." << std::endl;
+        engine->switchScreen(new MathSpeedScreen(engine));
       }
       
-     
+      if (reactionTimeButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
+        std::cout << "Launching Reaction Time..." << std::endl;
+        engine->switchScreen(new ReactionTimeScreen(engine));
+      }
+      
       if (backButton->isClicked(mousePos, sf::Mouse::Button::Left)) {
         std::cout << "Returning to main menu..." << std::endl;
         engine->switchScreen(new MainMenuScreen(engine));
@@ -91,6 +106,7 @@ void GameSelectScreen::update(sf::Time deltaTime) {
   sf::Vector2i mousePos = sf::Mouse::getPosition(engine->getWindow());
   memoryMatchButton->update(mousePos);
   mathSpeedButton->update(mousePos);
+  reactionTimeButton->update(mousePos);
   backButton->update(mousePos);
 }
 
@@ -98,5 +114,6 @@ void GameSelectScreen::render(sf::RenderWindow &window) {
   window.draw(titleText);
   memoryMatchButton->render(window);
   mathSpeedButton->render(window);
+  reactionTimeButton->render(window);
   backButton->render(window);
 }

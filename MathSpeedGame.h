@@ -5,7 +5,7 @@
 #include <string>
 
 class MathSpeedGame : public BaseGame {
-private:
+public:
   int a;
   int b;
   std::string displaying_equation;
@@ -13,8 +13,6 @@ private:
   int correct_answer;
 
   void CreateProblem(std::string difficulty);
-
-public:
   MathSpeedGame(std::string difficulty, StatisticsManager *stats);
   void Update(double deltaTime) override;
   void DisplayOutput() override;

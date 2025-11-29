@@ -8,6 +8,7 @@ private:
     
     Button* memoryMatchButton;
     Button* mathSpeedButton;
+    Button* reactionTimeButton;
     Button* backButton;
 
 public:
