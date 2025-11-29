@@ -13,7 +13,7 @@ public:
   int correct_answer;
 
   void CreateProblem(std::string difficulty);
-  MathSpeedGame(std::string difficulty, StatisticsManager *stats);
+  MathSpeedGame(std::string difficulty, StatisticsManager *stats, SoundManager *soundMgr);
   void Update(double deltaTime) override;
   void DisplayOutput() override;
   void HandleInput() override;

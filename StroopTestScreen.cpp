@@ -16,7 +16,7 @@ StroopTestScreen::StroopTestScreen(Engine* app)
       showFeedback(false),
       feedbackTimer(0.0f)
 {
-    game = new StroopTestGame("Medium", app->getStats());
+    game = new StroopTestGame("Medium", app->getStats(), app->getSoundManager());
     
     sf::Vector2u windowSize = app->getWindow().getSize();
     float centerX = windowSize.x / 2.0f;

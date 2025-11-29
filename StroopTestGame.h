@@ -25,7 +25,7 @@ private:
     std::string colorToString(ColorType color);
 
 public:
-    StroopTestGame(std::string difficulty, StatisticsManager* stats);
+    StroopTestGame(std::string difficulty, StatisticsManager* stats, SoundManager* soundMgr);
     
     void Update(double deltaTime) override;
     void DisplayOutput() override;

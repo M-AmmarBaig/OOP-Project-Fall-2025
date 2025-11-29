@@ -3,8 +3,8 @@
 #include <ctime>
 #include <iostream>
 
-StroopTestGame::StroopTestGame(std::string difficulty, StatisticsManager* stats)
-    : BaseGame(difficulty, 60.0, stats, 3), 
+StroopTestGame::StroopTestGame(std::string difficulty, StatisticsManager* stats, SoundManager* soundMgr)
+    : BaseGame(difficulty, 60.0, stats, 3, soundMgr), 
       correctCount(0),
       incorrectCount(0)
 {

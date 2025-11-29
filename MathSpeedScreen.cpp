@@ -10,7 +10,7 @@ MathSpeedScreen::MathSpeedScreen(Engine *app)
       inputPromptText(*app->getFont()), inputText(*app->getFont()),
       feedbackText(*app->getFont()), showFeedback(false), feedbackTimer(0.0f)
 {
-  game = new MathSpeedGame("Easy", app->getStats());
+  game = new MathSpeedGame("Easy", app->getStats(), app->getSoundManager());
   game->StartTimer();
 
   sf::Vector2u windowSize = app->getWindow().getSize();

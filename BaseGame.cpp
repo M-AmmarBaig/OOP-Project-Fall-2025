@@ -4,22 +4,31 @@
 BaseGame::BaseGame()
     : currentScore(0), GameTimer(0.0), TimeLimit(0.0), ScoreMultiplier(1.0),
       IsPaused(false), IsGameOver(false), TimerActive(false),
-      difficultyLevel("Easy"), InternalGameStatistics(nullptr), gameIndex(0) {}
+      difficultyLevel("Easy"), InternalGameStatistics(nullptr), gameIndex(0), soundManager(nullptr) {}
 
 BaseGame::BaseGame(std::string difficulty, double TimeLimit,
-                   StatisticsManager *statsManager, int GameIndex)
+                   StatisticsManager *statsManager, int GameIndex, SoundManager *soundMgr)
     : currentScore(0), GameTimer(0.0), TimeLimit(TimeLimit), IsPaused(false),
       IsGameOver(false), TimerActive(false), difficultyLevel(difficulty),
-      InternalGameStatistics(statsManager), gameIndex(GameIndex) {
+      InternalGameStatistics(statsManager), gameIndex(GameIndex), soundManager(soundMgr) {
   SetDifficulty(difficulty);
 }
 
 void BaseGame::AddScore(int Points) {
+  if (Points < 0 && soundManager) {
+    soundManager->playPenaltySound();
+  }
+  
   if (Points < 0 && currentScore < -1 * Points) {
     currentScore = 0;
     return;
   }
+  
   currentScore += Points;
+  
+  if (Points > 0 && soundManager) {
+    soundManager->playScoreSound();
+  }
 }
 
 void BaseGame::StartTimer() {

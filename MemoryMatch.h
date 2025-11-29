@@ -10,7 +10,7 @@ public:
   bool isShowingPattern;
 
   void AddToSequence();
-  MemoryMatch(std::string difficulty, StatisticsManager *stats);
+  MemoryMatch(std::string difficulty, StatisticsManager *stats, SoundManager *soundMgr);
   void Update(double deltaTime) override;
   void DisplayOutput() override;
   void HandleInput() override;

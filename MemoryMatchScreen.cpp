@@ -11,7 +11,7 @@ MemoryMatchScreen::MemoryMatchScreen(Engine *app)
       feedbackText(*app->getFont()), isShowingSequence(true), sequenceIndex(0),
       sequenceTimer(0.0f), userSequenceIndex(0), showFeedback(false), feedbackTimer(0.0f)
 {
-  game = new MemoryMatch("Easy", app->getStats());
+  game = new MemoryMatch("Easy", app->getStats(), app->getSoundManager());
 
   sf::Vector2u windowSize = app->getWindow().getSize();
   float centerX = windowSize.x / 2.0f;

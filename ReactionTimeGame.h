@@ -26,7 +26,7 @@ private:
     float getRandomFloat(float min, float max);
 
 public:
-    ReactionTimeGame(std::string difficulty, StatisticsManager* stats);
+    ReactionTimeGame(std::string difficulty, StatisticsManager* stats, SoundManager* soundMgr);
     
     void SetSpawnBounds(float minX, float maxX, float minY, float maxY);
     

@@ -4,8 +4,8 @@
 #include <ctime>
 #include <iostream>
 
-ReactionTimeGame::ReactionTimeGame(std::string difficulty, StatisticsManager* stats)
-    : BaseGame(difficulty, 60.0, stats, 2),  // 60 second time limit, game index 2
+ReactionTimeGame::ReactionTimeGame(std::string difficulty, StatisticsManager* stats, SoundManager* soundMgr)
+    : BaseGame(difficulty, 60.0, stats, 2, soundMgr),  // 60 second time limit, game index 2
       targetActive(false),
       spawnTimer(0.0f),
       targetLifetime(0.0f),

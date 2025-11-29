@@ -2,6 +2,7 @@
 #define BASEGAME_H
 
 #include "StatisticsManager.h"
+#include "SoundManager.h"
 #include <string>
 
 class BaseGame {
@@ -15,13 +16,14 @@ private:
 
 public:
   StatisticsManager *InternalGameStatistics;
+  SoundManager *soundManager;
   int currentScore;
   double GameTimer;
   double TimeLimit;
 
   BaseGame();
   BaseGame(std::string difficulty, double TimeLimit,
-           StatisticsManager *statsManager, int GameIndex);
+           StatisticsManager *statsManager, int GameIndex, SoundManager *soundMgr);
 
   void AddScore(int Points);
   void StartTimer();

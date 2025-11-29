@@ -4,8 +4,8 @@
 #include <iostream>
 #include <thread>
 
-MemoryMatch::MemoryMatch(std::string difficulty, StatisticsManager *stats)
-    : BaseGame(difficulty, 0.0, stats, 0) {
+MemoryMatch::MemoryMatch(std::string difficulty, StatisticsManager *stats, SoundManager *soundMgr)
+    : BaseGame(difficulty, 0.0, stats, 0, soundMgr) {
   isShowingPattern = true;
   AddToSequence();
   AddToSequence();

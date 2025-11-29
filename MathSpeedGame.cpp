@@ -5,8 +5,8 @@
 #include <string>
 #include <thread>
 
-MathSpeedGame::MathSpeedGame(std::string difficulty, StatisticsManager *stats)
-    : BaseGame(difficulty, 60.0, stats, 1), correct_answer(0) {
+MathSpeedGame::MathSpeedGame(std::string difficulty, StatisticsManager *stats, SoundManager *soundMgr)
+    : BaseGame(difficulty, 60.0, stats, 1, soundMgr), correct_answer(0) {
   CreateProblem(difficulty);
 }
 

@@ -15,6 +15,14 @@ Engine::Engine() : statsManager("game_data.txt") {
         std::cerr << "WARNING: Could not load button click sound" << std::endl;
     }
 
+    if (!soundManager.loadScoreSound("score_sound.mp3")) {
+        std::cerr << "WARNING: Could not load score sound" << std::endl;
+    }
+
+    if (!soundManager.loadPenaltySound("penalty_sound.mp3")) {
+        std::cerr << "WARNING: Could not load penalty sound" << std::endl;
+    }
+
     if (!soundManager.loadBackgroundMusic("background_music.mp3")) {
         std::cerr << "WARNING: Could not load background music" << std::endl;
     } else {
