@@ -25,7 +25,7 @@ ReactionTimeScreen::ReactionTimeScreen(Engine* app)
                         150.0f, static_cast<float>(windowSize.y));
     
     titleText.setString("REACTION TIME CHALLENGE");
-    titleText.setCharacterSize(40);
+    titleText.setCharacterSize(30);
     titleText.setFillColor(sf::Color::Cyan);
     titleText.setOutlineColor(sf::Color::Black);
     titleText.setOutlineThickness(2.0f);
@@ -35,24 +35,21 @@ ReactionTimeScreen::ReactionTimeScreen(Engine* app)
     titleText.setOrigin({textRect.size.x / 2.0f, textRect.size.y / 2.0f});
     titleText.setPosition({centerX, 50.f});
     
-    timerText.setCharacterSize(28);
+    timerText.setCharacterSize(24);
     timerText.setFillColor(sf::Color::White);
-    timerText.setPosition({50.f, 100.f});
     
-    scoreText.setCharacterSize(28);
+    scoreText.setCharacterSize(26);
     scoreText.setFillColor(sf::Color::Yellow);
-    scoreText.setPosition({50.f, 140.f});
     
     instructionText.setString("Click the targets as fast as you can!");
-    instructionText.setCharacterSize(24);
+    instructionText.setCharacterSize(20);
     instructionText.setFillColor(sf::Color(150, 150, 150));
     textRect = instructionText.getLocalBounds();
     instructionText.setOrigin({textRect.size.x / 2.0f, textRect.size.y / 2.0f});
-    instructionText.setPosition({centerX, 120.f});
+    instructionText.setPosition({centerX, 100.f});
     
-    statsText.setCharacterSize(24);
+    statsText.setCharacterSize(22);
     statsText.setFillColor(sf::Color::White);
-    statsText.setPosition({windowSize.x - 300.f, 100.f});
     
     reactionText.setCharacterSize(32);
     reactionText.setFillColor(sf::Color::Green);
@@ -107,18 +104,29 @@ void ReactionTimeScreen::update(sf::Time deltaTime) {
     
     game->Update(dt);
     
+    float centerX = engine->getWindow().getSize().x / 2.0f;
+    
     std::ostringstream timerStream;
     timerStream << "Time: " << std::fixed << std::setprecision(1) 
                 << game->GameTimer << "s / " 
                 << game->TimeLimit << "s";
     timerText.setString(timerStream.str());
+    sf::FloatRect timerBounds = timerText.getLocalBounds();
+    timerText.setOrigin({timerBounds.size.x / 2.0f, timerBounds.size.y / 2.0f});
+    timerText.setPosition({centerX, 140.f});
     
     scoreText.setString("Score: " + std::to_string(game->currentScore));
+    sf::FloatRect scoreBounds = scoreText.getLocalBounds();
+    scoreText.setOrigin({scoreBounds.size.x / 2.0f, scoreBounds.size.y / 2.0f});
+    scoreText.setPosition({centerX, 175.f});
     
     std::ostringstream statsStream;
     statsStream << "Clicked: " << game->GetTargetsClicked() << "\n"
                 << "Missed: " << game->GetTargetsMissed();
     statsText.setString(statsStream.str());
+    sf::FloatRect statsBounds = statsText.getLocalBounds();
+    statsText.setOrigin({statsBounds.size.x / 2.0f, statsBounds.size.y / 2.0f});
+    statsText.setPosition({centerX, 220.f});
     
     if (game->IsTargetActive()) {
         targetCircle.setRadius(game->GetTargetRadius());
