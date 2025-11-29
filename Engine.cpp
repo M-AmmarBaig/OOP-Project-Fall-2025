@@ -11,6 +11,10 @@ Engine::Engine() : statsManager("game_data.txt") {
         std::cerr << "CRITICAL ERROR: Could not load arial.ttf" << std::endl;
     }
 
+    if (!soundManager.loadButtonClickSound("button_click.mp3")) {
+        std::cerr << "WARNING: Could not load button click sound" << std::endl;
+    }
+
     statsManager.ReadFromFile();
 
     currentScreen = new MainMenuScreen(this);
@@ -49,7 +53,7 @@ void Engine::run() {
             currentScreen->update(deltaTime);
         }
 
-        window.clear(sf::Color(20, 30, 40)); // Dark Blue Background
+        window.clear(sf::Color(20, 30, 40));
 
         if (currentScreen != nullptr) {
             currentScreen->render(window);

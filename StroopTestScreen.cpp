@@ -67,7 +67,8 @@ StroopTestScreen::StroopTestScreen(Engine* app)
         "RED",
         sf::Color(100, 30, 30),
         sf::Color(130, 40, 40),
-        sf::Color::Red
+        sf::Color::Red,
+        app->getSoundManager()
     );
     
     blueButton = new Button(
@@ -76,7 +77,8 @@ StroopTestScreen::StroopTestScreen(Engine* app)
         "BLUE",
         sf::Color(30, 30, 100),
         sf::Color(40, 40, 130),
-        sf::Color::Blue
+        sf::Color::Blue,
+        app->getSoundManager()
     );
     
     greenButton = new Button(
@@ -85,7 +87,8 @@ StroopTestScreen::StroopTestScreen(Engine* app)
         "GREEN",
         sf::Color(30, 100, 30),
         sf::Color(40, 130, 40),
-        sf::Color::Green
+        sf::Color::Green,
+        app->getSoundManager()
     );
     
     yellowButton = new Button(
@@ -94,7 +97,8 @@ StroopTestScreen::StroopTestScreen(Engine* app)
         "YELLOW",
         sf::Color(100, 100, 30),
         sf::Color(130, 130, 40),
-        sf::Color::Yellow
+        sf::Color::Yellow,
+        app->getSoundManager()
     );
     
     float backBtnWidth = 120.f;
@@ -106,7 +110,8 @@ StroopTestScreen::StroopTestScreen(Engine* app)
         "Back",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(200, 50, 50)
+        sf::Color(200, 50, 50),
+        app->getSoundManager()
     );
 }
 

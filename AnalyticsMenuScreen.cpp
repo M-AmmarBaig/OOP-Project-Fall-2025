@@ -35,7 +35,8 @@ AnalyticsMenuScreen::AnalyticsMenuScreen(Engine* app)
         "Memory Match Stats",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(150, 100, 200)
+        sf::Color(150, 100, 200),
+        app->getSoundManager()
     );
     
     mathSpeedButton = new Button(
@@ -44,7 +45,8 @@ AnalyticsMenuScreen::AnalyticsMenuScreen(Engine* app)
         "Math Speed Stats",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(200, 150, 50)
+        sf::Color(200, 150, 50),
+        app->getSoundManager()
     );
     
     reactionTimeButton = new Button(
@@ -53,7 +55,8 @@ AnalyticsMenuScreen::AnalyticsMenuScreen(Engine* app)
         "Reaction Time Stats",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(50, 200, 100)
+        sf::Color(50, 200, 100),
+        app->getSoundManager()
     );
     
     stroopTestButton = new Button(
@@ -62,7 +65,8 @@ AnalyticsMenuScreen::AnalyticsMenuScreen(Engine* app)
         "Stroop Test Stats",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(200, 100, 200)
+        sf::Color(200, 100, 200),
+        app->getSoundManager()
     );
     
     overallButton = new Button(
@@ -71,7 +75,8 @@ AnalyticsMenuScreen::AnalyticsMenuScreen(Engine* app)
         "Overall Performance",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(255, 200, 50)
+        sf::Color(255, 200, 50),
+        app->getSoundManager()
     );
     
     float backBtnWidth = 150.f;
@@ -83,7 +88,8 @@ AnalyticsMenuScreen::AnalyticsMenuScreen(Engine* app)
         "Back",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(200, 50, 50)
+        sf::Color(200, 50, 50),
+        app->getSoundManager()
     );
 }
 

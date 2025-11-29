@@ -64,7 +64,8 @@ GameAnalyticsScreen::GameAnalyticsScreen(Engine* app, int gameIdx)
         "Back",
         sf::Color(70, 70, 70),
         sf::Color(100, 100, 100),
-        sf::Color(200, 50, 50)
+        sf::Color(200, 50, 50),
+        app->getSoundManager()
     );
 }
 

@@ -36,7 +36,8 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       "Memory Match", 
       sf::Color(70, 70, 70),
       sf::Color(100, 100, 100), 
-      sf::Color(150, 100, 200));  
+      sf::Color(150, 100, 200),
+      app->getSoundManager());  
 
   mathSpeedButton = new Button(
       btnX, startY + gap, btnWidth, btnHeight, 
@@ -44,7 +45,8 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       "Math Speed", 
       sf::Color(70, 70, 70),
       sf::Color(100, 100, 100), 
-      sf::Color(200, 150, 50));  
+      sf::Color(200, 150, 50),
+      app->getSoundManager());  
 
   reactionTimeButton = new Button(
       btnX, startY + (gap * 2), btnWidth, btnHeight, 
@@ -52,7 +54,8 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       "Reaction Time", 
       sf::Color(70, 70, 70),
       sf::Color(100, 100, 100), 
-      sf::Color(50, 200, 100));  
+      sf::Color(50, 200, 100),
+      app->getSoundManager());  
 
   stroopTestButton = new Button(
       btnX, startY + (gap * 3), btnWidth, btnHeight, 
@@ -60,7 +63,8 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       "Stroop Test", 
       sf::Color(70, 70, 70),
       sf::Color(100, 100, 100), 
-      sf::Color(200, 100, 200));  
+      sf::Color(200, 100, 200),
+      app->getSoundManager());  
 
   float backBtnWidth = 200.f;
   float backBtnHeight = 60.f;
@@ -72,7 +76,8 @@ GameSelectScreen::GameSelectScreen(Engine *app)
       "Back", 
       sf::Color(70, 70, 70),
       sf::Color(100, 100, 100), 
-      sf::Color(200, 50, 50)); 
+      sf::Color(200, 50, 50),
+      app->getSoundManager()); 
 }
 
 GameSelectScreen::~GameSelectScreen() {

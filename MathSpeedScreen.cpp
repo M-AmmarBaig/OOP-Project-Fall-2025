@@ -55,7 +55,7 @@ MathSpeedScreen::MathSpeedScreen(Engine *app)
   backButton = new Button(
       centerX - (backBtnWidth / 2.0f), 850.f, backBtnWidth, backBtnHeight,
       app->getFont(), "Back", sf::Color(70, 70, 70), sf::Color(100, 100, 100),
-      sf::Color(200, 50, 50));
+      sf::Color(200, 50, 50), app->getSoundManager());
 }
 
 MathSpeedScreen::~MathSpeedScreen() {

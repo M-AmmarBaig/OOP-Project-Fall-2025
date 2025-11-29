@@ -1,25 +1,24 @@
 #include "Button.h"
+#include "SoundManager.h"
 
 Button::Button(float x, float y, float width, float height,
                sf::Font* font, std::string textStr,
-               sf::Color idleColor, sf::Color hoverColor, sf::Color activeColor)
-    : font(font), text(*font)
+               sf::Color idleColor, sf::Color hoverColor, sf::Color activeColor,
+               SoundManager* soundManager)
+    : font(font), text(*font), soundManager(soundManager)
 {
     this->idleColor = idleColor;
     this->hoverColor = hoverColor;
     this->activeColor = activeColor;
 
-    // Setup the Shape
     this->shape.setPosition({x, y});
     this->shape.setSize({width, height});
     this->shape.setFillColor(this->idleColor);
 
-    // Setup the Text
     this->text.setString(textStr);
     this->text.setFillColor(sf::Color::White);
     this->text.setCharacterSize(20);
 
-    // Centering Logic
     sf::FloatRect textBounds = this->text.getGlobalBounds();
     sf::FloatRect shapeBounds = this->shape.getGlobalBounds();
 
@@ -35,6 +34,9 @@ Button::~Button() {
 bool Button::isClicked(const sf::Vector2i& mousePos, sf::Mouse::Button button) {
     if (this->shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
         if (button == sf::Mouse::Button::Left) {
+            if (soundManager) {
+                soundManager->playButtonClick();
+            }
             return true;
         }
     }

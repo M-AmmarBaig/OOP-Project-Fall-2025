@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "StatisticsManager.h"
+#include "SoundManager.h"
 #include "BaseScreen.h"
 
 class Engine {
@@ -9,6 +10,7 @@ private:
     BaseScreen* currentScreen;
 
     StatisticsManager statsManager;
+    SoundManager soundManager;
 
     sf::Font mainFont;
 
@@ -21,6 +23,7 @@ public:
     void switchScreen(BaseScreen* newScreen);
 
     StatisticsManager* getStats() { return &statsManager; }
+    SoundManager* getSoundManager() { return &soundManager; }
     sf::Font* getFont() { return &mainFont; }
     sf::RenderWindow& getWindow() { return window; }
 };
