@@ -85,13 +85,4 @@ void StroopTestGame::GenerateNext() {
     generateNewTrial();
 }
 
-void StroopTestGame::DisplayOutput() {
-    std::cout << "Word: " << wordText << std::endl;
-    std::cout << "Display Color: " << colorToString(displayColor) << std::endl;
-    std::cout << "Score: " << currentScore << std::endl;
-    std::cout << "Correct: " << correctCount << " | Incorrect: " << incorrectCount << std::endl;
-}
 
-void StroopTestGame::HandleInput() {
-    // Input handled in screen class
-}

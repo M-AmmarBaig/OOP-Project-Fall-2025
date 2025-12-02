@@ -32,9 +32,6 @@ public:
 
     bool loadBackgroundMusic(const std::string& filename);
     void playBackgroundMusic();
-    void pauseBackgroundMusic();
-    void stopBackgroundMusic();
-    void setMusicVolume(float volume);
 };
 
 #endif

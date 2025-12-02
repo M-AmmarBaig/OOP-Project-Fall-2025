@@ -1,0 +1,10 @@
+In file included from src/main.cpp:1:
+include/Engine.h:2:10: fatal error: SFML/Graphics.hpp: No such file or directory
+    2 | #include <SFML/Graphics.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+In file included from src/Engine.cpp:1:
+include/Engine.h:2:10: fatal error: SFML/Graphics.hpp: No such file or directory
+    2 | #include <SFML/Graphics.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.

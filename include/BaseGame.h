@@ -33,9 +33,7 @@ public:
   void EndGame();
   bool IsGameActive();
 
-  virtual void HandleInput() = 0;
   virtual void Update(double TimeChange);
-  virtual void DisplayOutput() = 0;
   virtual ~BaseGame();
 };
 

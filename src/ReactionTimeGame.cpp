@@ -115,12 +115,4 @@ bool ReactionTimeGame::CheckClick(float mouseX, float mouseY, float& reactionTim
     return false;
 }
 
-void ReactionTimeGame::DisplayOutput() {
-    std::cout << "Score: " << currentScore << std::endl;
-    std::cout << "Time: " << GameTimer << "/" << TimeLimit << std::endl;
-    std::cout << "Targets Clicked: " << targetsClicked << std::endl;
-    std::cout << "Targets Missed: " << targetsMissed << std::endl;
-}
 
-void ReactionTimeGame::HandleInput() {
-}

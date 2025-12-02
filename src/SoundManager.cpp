@@ -64,14 +64,4 @@ void SoundManager::playBackgroundMusic() {
     }
 }
 
-void SoundManager::pauseBackgroundMusic() {
-    backgroundMusic.pause();
-}
 
-void SoundManager::stopBackgroundMusic() {
-    backgroundMusic.stop();
-}
-
-void SoundManager::setMusicVolume(float volume) {
-    backgroundMusic.setVolume(volume);
-}

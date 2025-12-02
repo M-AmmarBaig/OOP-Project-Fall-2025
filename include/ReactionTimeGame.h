@@ -31,8 +31,6 @@ public:
     void SetSpawnBounds(float minX, float maxX, float minY, float maxY);
     
     void Update(double deltaTime) override;
-    void DisplayOutput() override;
-    void HandleInput() override;
     
     bool CheckClick(float mouseX, float mouseY, float& reactionTime);
     sf::Vector2f GetTargetPosition() const { return targetPosition; }

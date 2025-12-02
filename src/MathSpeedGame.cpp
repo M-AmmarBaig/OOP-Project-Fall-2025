@@ -39,39 +39,3 @@ void MathSpeedGame::CreateProblem(std::string difficulty) {
 }
 
 void MathSpeedGame::Update(double deltaTime) { BaseGame::Update(deltaTime); }
-
-void MathSpeedGame::DisplayOutput() {
-  system("cls");
-  std::cout << "MATH SPEED GAME" << std::endl;
-  double remaining = TimeLimit - GameTimer;
-  if (remaining < 0)
-    remaining = 0;
-  std::cout << "Time: " << (int)remaining << " seconds" << std::endl;
-  std::cout << "Score: " << currentScore << std::endl;
-
-  std::cout << "\nSolve: " << displaying_equation << "\n" << std::endl;
-  std::cout << "Answer: ";
-}
-
-void MathSpeedGame::HandleInput() {
-  int user_input;
-  std::cin >> user_input;
-
-  if (std::cin.fail()) {
-    std::cin.clear();
-    std::cin.ignore(10000, '\n');
-    return;
-  }
-
-  if (user_input == correct_answer) {
-    std::cout << "Correct!" << std::endl;
-    AddScore(100);
-    CreateProblem(GetDifficulty());
-  } else {
-    std::cout << "Wrong!" << std::endl;
-    AddScore(-20);
-    CreateProblem(GetDifficulty());
-  }
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(800));
-}

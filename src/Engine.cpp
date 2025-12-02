@@ -7,23 +7,23 @@ Engine::Engine() : statsManager("game_data.txt") {
     window.create(sf::VideoMode({540, 960}), "Brain Games Engine");
     window.setFramerateLimit(60);
 
-    if (!mainFont.openFromFile("JetBrainsMonoNerdFont-Bold.ttf")) {
+    if (!mainFont.openFromFile("assets/fonts/JetBrainsMonoNerdFont-Bold.ttf")) {
         std::cerr << "CRITICAL ERROR: Could not load arial.ttf" << std::endl;
     }
 
-    if (!soundManager.loadButtonClickSound("button_click.mp3")) {
+    if (!soundManager.loadButtonClickSound("assets/sounds/button_click.mp3")) {
         std::cerr << "WARNING: Could not load button click sound" << std::endl;
     }
 
-    if (!soundManager.loadScoreSound("score_sound.mp3")) {
+    if (!soundManager.loadScoreSound("assets/sounds/score_sound.mp3")) {
         std::cerr << "WARNING: Could not load score sound" << std::endl;
     }
 
-    if (!soundManager.loadPenaltySound("penalty_sound.mp3")) {
+    if (!soundManager.loadPenaltySound("assets/sounds/penalty_sound.mp3")) {
         std::cerr << "WARNING: Could not load penalty sound" << std::endl;
     }
 
-    if (!soundManager.loadBackgroundMusic("background_music.mp3")) {
+    if (!soundManager.loadBackgroundMusic("assets/sounds/background_music.mp3")) {
         std::cerr << "WARNING: Could not load background music" << std::endl;
     } else {
         soundManager.playBackgroundMusic();

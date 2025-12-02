@@ -28,8 +28,6 @@ public:
     StroopTestGame(std::string difficulty, StatisticsManager* stats, SoundManager* soundMgr);
     
     void Update(double deltaTime) override;
-    void DisplayOutput() override;
-    void HandleInput() override;
     
     bool CheckAnswer(ColorType selectedColor);
     void GenerateNext();
